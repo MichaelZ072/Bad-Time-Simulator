@@ -12,20 +12,18 @@ class Sans
 {
     private:
         int health;
-
         Texture texture;
         Sprite body;
         
     public:
-        Sans(int x, int y, int health, string texturefile);
+        Sans(int x, int y, int health, double scale, string texturefile);
         Sans();
 
         void draw(RenderWindow* win);
 
-        // void changeSprite(string texturefile);
-
-        // void dodgeLeft(int speed);
-        // void dodgeRight(int speed);
+        void setBody(string texturefile);
+        
+        void dodge(int speed);
 
         ~Sans();
         
