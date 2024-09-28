@@ -14,7 +14,7 @@ class OOPGame
     public:
         OOPGame(int sizeX, int sizeY, string title) {
             win = new RenderWindow(VideoMode(sizeX, sizeY), title);
-            sans = new Sans(sizeX/2.0f, sizeY/2.0f, 1, 2, "assets/sansUp.png");
+            sans = new Sans(sizeX/2.0f, sizeY/2.0f, 1, 2, "assets/sansFace.png", "assets/sansTorso.png", "assets/sansLeg.png");
         }
         void run() {
             while (win->isOpen())
@@ -25,7 +25,7 @@ class OOPGame
                     if(event.type == Event::Closed){
                         win->close();
                     } else if (Keyboard::isKeyPressed(Keyboard::Space)){
-                        sans->setBody("assets/sansBody.png");
+                        sans->setBody("assets/sansUp.png");
                     }
                 }
             win->clear(Color::Black);
