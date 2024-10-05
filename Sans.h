@@ -12,6 +12,7 @@ class Sans
 {
     private:
         int health;
+        bool isIdle;
 
         Texture headTexture;
         Sprite head;
@@ -21,7 +22,7 @@ class Sans
 
         Texture legTexture;
         Sprite leg;
-        
+
     public:
         Sans(int x, int y, int health, double scale, string headTextureFile, string bodyTextureFile, string legTextureFile);
         Sans();
@@ -31,8 +32,15 @@ class Sans
         void setHead(string texturefile);
         void setBody(string texturefile);
         void setLeg(string texturefile);
+
+        Vector2f getHeadPosition() { return head.getPosition(); }
+        Vector2f getBodyPosition() { return body.getPosition(); }
+        Vector2f getLegPosition() { return leg.getPosition(); }
         
-        void dodge(int speed);
+        void setIsIdle(bool isIdle) {this->isIdle = isIdle;}
+        bool getIsIdle() { return isIdle; }
+
+        void dodge(double speed, double distance, double endPosition); // whereby sans will only dodge to the left
 
         ~Sans();
         

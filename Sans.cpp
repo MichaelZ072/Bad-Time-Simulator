@@ -1,8 +1,11 @@
 #include "Sans.h"
 
+#include <cmath>
+
 Sans::Sans(int x, int y, int health, double scale, string headTextureFile, string bodyTextureFile, string legTextureFile)
 {
     this->health = health;
+    isIdle = true;
 
     // load textures
     if (!headTexture.loadFromFile(headTextureFile))     
@@ -29,8 +32,6 @@ Sans::Sans(int x, int y, int health, double scale, string headTextureFile, strin
     // create sprite from texture
     leg.setTexture(legTexture);
 
-    
-    
     // change body properties (building sans from bottom to top
     Vector2u legTextureSize = legTexture.getSize();
     leg.setScale(scale, scale);
@@ -46,8 +47,6 @@ Sans::Sans(int x, int y, int health, double scale, string headTextureFile, strin
     head.setScale(scale, scale);
     head.setOrigin(headTextureSize.x / 2.0f, headTextureSize.y);
     head.setPosition(sf::Vector2f(x, y - legTextureSize.y * scale - bodyTextureSize.y * scale + (headTextureSize.y * scale / 5.5f))); // because head sits on torso
-
-
 
 }
 
@@ -68,10 +67,12 @@ void Sans::setHead(string texturefile)
         cout << "this texture could not be loaded" << endl; 
     }
     // replace sprite from texture
-    head.setTexture(headTexture);
-    
+    head.setTextureRect(IntRect(Vector2i(0, 0), Vector2i(headTexture.getSize())));
+
+   
     // re-setting origin point
     Vector2u textureSize = headTexture.getSize();
+    head.setOrigin(textureSize.x / 2.0f,textureSize.y);
 
 }
 
@@ -87,10 +88,12 @@ void Sans::setBody(string texturefile)
         cout << "this texture could not be loaded" << endl; 
     }
     // replace sprite from texture
-    body.setTexture(bodyTexture);
+    body.setTextureRect(IntRect(Vector2i(0, 0), Vector2i(bodyTexture.getSize())));
 
     // re-setting origin point
     Vector2u textureSize = bodyTexture.getSize();
+    body.setOrigin(textureSize.x / 2.0f,textureSize.y);
+    
 }
 
 void Sans::setLeg(string texturefile)
@@ -103,14 +106,35 @@ void Sans::setLeg(string texturefile)
         cout << "this texture could not be loaded" << endl; 
     }
     // replace sprite from texture
-    leg.setTexture(legTexture);
+    leg.setTextureRect(IntRect(Vector2i(0, 0), Vector2i(legTexture.getSize())));
+
     
     // re-setting origin point
     Vector2u textureSize = legTexture.getSize();
+    leg.setOrigin(textureSize.x / 2.0f,textureSize.y);
 
 }
 
-void Sans::dodge(int speed)
+void Sans::dodge(double speed, double distance, double endPosition)
 {
+    /*
+    if (body.getPosition().x < distance) { // determines whether sans moves left or right during his dodging
+        head.move(speed, 0);
+        body.move(speed, 0);
+        leg.move(speed, 0);
+    }
+    */
+
+    head.move(-speed, 0);
     body.move(-speed, 0);
+    leg.move(-speed, 0);
+
+    //determines whether sans should stop moving
+    if (body.getPosition().x > endPosition)
+    {
+        body.setPosition(endPosition, body.getPosition().y);
+        head.setPosition(endPosition, head.getPosition().y);
+        leg.setPosition(endPosition, leg.getPosition().y);
+        isIdle = true;
+    }
 }
