@@ -6,6 +6,7 @@ Sans::Sans(int x, int y, int health, double scale, string headTextureFile, strin
 {
     this->health = health;
     isIdle = true;
+    dodgeDirection = false;
 
     // load textures
     if (!headTexture.loadFromFile(headTextureFile))     
@@ -115,19 +116,24 @@ void Sans::setLeg(string texturefile)
 
 }
 
+void Sans::moveFull(double offsetX, double offsetY)
+{
+    head.move(offsetX, offsetY);
+    body.move(offsetX, offsetY);
+    leg.move(offsetX, offsetY); 
+}
+
 void Sans::dodge(double speed, double distance, double endPosition)
 {
-    /*
-    if (body.getPosition().x < distance) { // determines whether sans moves left or right during his dodging
-        head.move(speed, 0);
-        body.move(speed, 0);
-        leg.move(speed, 0);
+    if (body.getPosition().x < distance) {
+        dodgeDirection = true;
     }
-    */
-
-    head.move(-speed, 0);
-    body.move(-speed, 0);
-    leg.move(-speed, 0);
+    
+    if (dodgeDirection == false) {
+        moveFull(-speed, 0);
+    } else {
+        moveFull(speed, 0);
+    }
 
     //determines whether sans should stop moving
     if (body.getPosition().x > endPosition)
@@ -136,5 +142,6 @@ void Sans::dodge(double speed, double distance, double endPosition)
         head.setPosition(endPosition, head.getPosition().y);
         leg.setPosition(endPosition, leg.getPosition().y);
         isIdle = true;
+        dodgeDirection = false;
     }
 }

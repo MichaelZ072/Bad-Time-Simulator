@@ -14,7 +14,7 @@ class GameMaster
         Time time;
         
         //sans animation logic
-        double dodgeSpeed = 3;
+        double dodgeSpeed = 4;
     
     public:
         GameMaster(int sizeX, int sizeY, string title) {
@@ -42,17 +42,11 @@ class GameMaster
                 }
             }
 
+            Vector2u winSize = win->getSize();
+            
+            //sans dodge sequence
             if (sans->getIsIdle() == false) {
-                Vector2u winSize = win->getSize();
-                sans->dodge(dodgeSpeed, winSize.x/2.0f - 100, winSize.x/2.0f);
-                if (sans->getBodyPosition().x < (winSize.x/2.0f - 100)) {
-                    dodgeSpeed = dodgeSpeed*-1;
-                }
-                //reset dodgeSpeed
-                if (sans->getIsIdle() == true) {
-                    dodgeSpeed = dodgeSpeed*-1;
-                }       
-
+                sans->dodge(dodgeSpeed, (winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f);      
             }
                  
             win->clear();

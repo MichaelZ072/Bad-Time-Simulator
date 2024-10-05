@@ -13,6 +13,7 @@ class Sans
     private:
         int health;
         bool isIdle;
+        bool dodgeDirection; // 0 if left, 1 if right
 
         Texture headTexture;
         Sprite head;
@@ -40,6 +41,8 @@ class Sans
         void setIsIdle(bool isIdle) {this->isIdle = isIdle;}
         bool getIsIdle() { return isIdle; }
 
+
+        void moveFull(double offsetX, double offsetY); // movement for sans entire body
         void dodge(double speed, double distance, double endPosition); // whereby sans will only dodge to the left
 
         ~Sans();
