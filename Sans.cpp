@@ -125,10 +125,12 @@ void Sans::moveFull(double offsetX, double offsetY)
 
 void Sans::dodge(double speed, double distance, double endPosition)
 {
-    if (body.getPosition().x < distance) {
+    //swap Sans' direction of motion when he gets to a certain position
+    if (body.getPosition().x <= distance) {
         dodgeDirection = true;
     }
     
+    //moves Sans according to his set direction
     if (dodgeDirection == false) {
         moveFull(-speed, 0);
     } else {
@@ -136,8 +138,9 @@ void Sans::dodge(double speed, double distance, double endPosition)
     }
 
     //determines whether sans should stop moving
-    if (body.getPosition().x > endPosition)
+    if (body.getPosition().x >= endPosition)
     {
+        //forces Sans to return to idle
         body.setPosition(endPosition, body.getPosition().y);
         head.setPosition(endPosition, head.getPosition().y);
         leg.setPosition(endPosition, leg.getPosition().y);

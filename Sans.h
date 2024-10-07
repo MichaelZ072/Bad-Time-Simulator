@@ -33,14 +33,11 @@ class Sans
         void setHead(string texturefile);
         void setBody(string texturefile);
         void setLeg(string texturefile);
-
-        Vector2f getHeadPosition() { return head.getPosition(); }
-        Vector2f getBodyPosition() { return body.getPosition(); }
-        Vector2f getLegPosition() { return leg.getPosition(); }
         
         void setIsIdle(bool isIdle) {this->isIdle = isIdle;}
         bool getIsIdle() { return isIdle; }
 
+        bool getDodgeDirection() { return dodgeDirection; }
 
         void moveFull(double offsetX, double offsetY); // movement for sans entire body
         void dodge(double speed, double distance, double endPosition); // whereby sans will only dodge to the left

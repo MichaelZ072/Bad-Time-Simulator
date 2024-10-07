@@ -13,8 +13,8 @@ class GameMaster
         Clock clock;
         Time time;
         
-        //sans animation logic
-        double dodgeSpeed = 4;
+        Time sansTimer;
+        
     
     public:
         GameMaster(int sizeX, int sizeY, string title) {
@@ -44,9 +44,19 @@ class GameMaster
 
             Vector2u winSize = win->getSize();
             
+            double dodgeSpeed = 4;
+            double waitTime = 1;
+
             //sans dodge sequence
-            if (sans->getIsIdle() == false) {
-                sans->dodge(dodgeSpeed, (winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f);      
+            if (sans->getIsIdle() == false) { //first check if sans is called to move
+                //call dodge function normally when sans needs to move left
+                if (sans->getDodgeDirection() == false) { 
+                    sans->dodge(dodgeSpeed, (winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f);
+                    sansTimer = clock.getElapsedTime();
+                //if sans needs to move right, we have to wait (waitTime) second(s) before he can do so
+                } else if (clock.getElapsedTime().asSeconds() > sansTimer.asSeconds() + waitTime) {
+                    sans->dodge(dodgeSpeed, (winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f);   
+                }
             }
                  
             win->clear();
