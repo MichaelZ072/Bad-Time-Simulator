@@ -24,11 +24,30 @@ class Sans
         Texture legTexture;
         Sprite leg;
 
+        Texture speechBubbleTexture;
+        Sprite speechBubble;
+
+        Font font;
+        Text text;
+        string dialogueString;
+
+        Clock clock;
+        Time time;
+
+        double dodgeSpeed = 7;
+        double waitTime = 1;
+
+        bool dialogueVisible;
+
     public:
-        Sans(int x, int y, int health, double scale, string headTextureFile, string bodyTextureFile, string legTextureFile);
+        //add all variables to constructor maybe?
+        Sans(int x, int y, int health, string headTextureFile, string bodyTextureFile, string legTextureFile, string sansFontFile, string dialogueString);
         Sans();
 
         void draw(RenderWindow* win);
+        void talk(RenderWindow* win);
+
+        void setText(string dialogueString);
 
         void setHead(string texturefile);
         void setBody(string texturefile);
@@ -37,10 +56,14 @@ class Sans
         void setIsIdle(bool isIdle) {this->isIdle = isIdle;}
         bool getIsIdle() { return isIdle; }
 
+        // code these up
+        void setDialogueVisible();
+        bool getDialogueVisible();
+
         bool getDodgeDirection() { return dodgeDirection; }
 
         void moveFull(double offsetX, double offsetY); // movement for sans entire body
-        void dodge(double speed, double distance, double endPosition); // whereby sans will only dodge to the left
+        void dodge(double distance, double endPosition); // whereby sans will only dodge to the left
 
         ~Sans();
         

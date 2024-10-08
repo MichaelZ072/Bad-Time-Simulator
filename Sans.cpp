@@ -2,31 +2,31 @@
 
 #include <cmath>
 
-Sans::Sans(int x, int y, int health, double scale, string headTextureFile, string bodyTextureFile, string legTextureFile)
+Sans::Sans(int x, int y, int health, string headTextureFile, string bodyTextureFile, string legTextureFile, string sansFontFile, string dialogueString)
 {
     this->health = health;
     isIdle = true;
     dodgeDirection = false;
+    
+    clock.restart();
+    time = clock.getElapsedTime();
 
     // load textures
-    if (!headTexture.loadFromFile(headTextureFile))     
-    {
+    if (!headTexture.loadFromFile(headTextureFile)) {
         // print error if texture failed to load
         cout << "this texture could not be loaded" << endl; 
     }
     // create sprite from texture
     head.setTexture(headTexture);
 
-    if (!bodyTexture.loadFromFile(bodyTextureFile))     
-    {
+    if (!bodyTexture.loadFromFile(bodyTextureFile)) {
         // print error if texture failed to load
         cout << "this texture could not be loaded" << endl; 
     }
     // create sprite from texture
     body.setTexture(bodyTexture);
     
-    if (!legTexture.loadFromFile(legTextureFile))     
-    {
+    if (!legTexture.loadFromFile(legTextureFile)) {
         // print error if texture failed to load
         cout << "this texture could not be loaded" << endl; 
     }
@@ -35,20 +35,42 @@ Sans::Sans(int x, int y, int health, double scale, string headTextureFile, strin
 
     // change body properties (building sans from bottom to top
     Vector2u legTextureSize = legTexture.getSize();
-    leg.setScale(scale, scale);
     leg.setOrigin(legTextureSize.x / 2.0f, legTextureSize.y);  
-    leg.setPosition(sf::Vector2f(x, y));
+    leg.setPosition(x, y);
 
     Vector2u bodyTextureSize = bodyTexture.getSize();
-    body.setScale(scale, scale);
     body.setOrigin(bodyTextureSize.x / 2.0f, bodyTextureSize.y);
-    body.setPosition(sf::Vector2f(x, y - legTextureSize.y * scale)); // because torso sits on leg
+    body.setPosition(x, y - legTextureSize.y); // because torso sits on leg
 
     Vector2u headTextureSize = headTexture.getSize();
-    head.setScale(scale, scale);
     head.setOrigin(headTextureSize.x / 2.0f, headTextureSize.y);
-    head.setPosition(sf::Vector2f(x, y - legTextureSize.y * scale - bodyTextureSize.y * scale + (headTextureSize.y * scale / 5.5f))); // because head sits on torso
+    head.setPosition(x, y - legTextureSize.y - bodyTextureSize.y + (headTextureSize.y / 5.5f)); // because head sits on torso
 
+    // maybe move to talk function
+    // preparing font
+    font.loadFromFile(sansFontFile);
+
+    // preparing text
+    this->dialogueString = dialogueString;
+    text.setFont(font);
+    text.setString(dialogueString);
+    text.setFillColor(Color::Black);
+    
+    // creating the speech bubble
+    if (!speechBubbleTexture.loadFromFile("assets/speechBubble.png")) { // replace string with a default constructor string
+        // print error if texture failed to load
+        cout << "Could not load speech bubble texture";
+    };
+    speechBubble.setTexture(speechBubbleTexture);
+
+    Vector2u speechBubbleTextureSize = speechBubbleTexture.getSize();
+    speechBubble.setOrigin(0, speechBubbleTextureSize.y / 2.0f);
+    speechBubble.setPosition(x + bodyTextureSize.x / 2.0f + 8, y - legTextureSize.y - bodyTextureSize.y + 10);
+
+    // text position on top of speech bubble
+    text.setCharacterSize(13);
+    text.setOrigin(0, text.getCharacterSize() / 2.0f);
+    text.setPosition(x + bodyTextureSize.x / 2.0f + 43, y - legTextureSize.y - bodyTextureSize.y - 23);
 }
 
 void Sans::draw(RenderWindow *win)
@@ -56,11 +78,24 @@ void Sans::draw(RenderWindow *win)
     win->draw(leg);
     win->draw(body);
     win->draw(head);
+    win->draw(speechBubble);
+    win->draw(text);
+}
+
+void Sans::talk(RenderWindow *win)
+{
+    win->draw(speechBubble);
+    win->draw(text);
+}
+
+void Sans::setText(string dialogueString)
+{
+    this->dialogueString = dialogueString;
+    text.setString(dialogueString);
 }
 
 void Sans::setHead(string texturefile)
 {
-
     // load texture
     if (!headTexture.loadFromFile(texturefile))     
     {
@@ -79,8 +114,6 @@ void Sans::setHead(string texturefile)
 
 void Sans::setBody(string texturefile)
 {
-
-    Vector2u oldTextureSize = bodyTexture.getSize();    
 
     // load texture
     if (!bodyTexture.loadFromFile(texturefile))     
@@ -109,11 +142,9 @@ void Sans::setLeg(string texturefile)
     // replace sprite from texture
     leg.setTextureRect(IntRect(Vector2i(0, 0), Vector2i(legTexture.getSize())));
 
-    
     // re-setting origin point
     Vector2u textureSize = legTexture.getSize();
     leg.setOrigin(textureSize.x / 2.0f,textureSize.y);
-
 }
 
 void Sans::moveFull(double offsetX, double offsetY)
@@ -123,28 +154,36 @@ void Sans::moveFull(double offsetX, double offsetY)
     leg.move(offsetX, offsetY); 
 }
 
-void Sans::dodge(double speed, double distance, double endPosition)
+void Sans::dodge(double distance, double endPosition)
 {
+    //moves Sans according to his set direction
+    if (dodgeDirection == false) { // moving left
+        moveFull(-dodgeSpeed, 0);
+        time = clock.getElapsedTime(); // gets elapsed time
+        
+        if (dodgeSpeed >= 2) {
+            dodgeSpeed -= 0.25;
+        } 
+
+    // if sans needs to move right, we have to wait (waitTime) second(s) before he can do so
+    } else if (clock.getElapsedTime().asSeconds() > time.asSeconds() + waitTime) { // moving right
+        moveFull(dodgeSpeed, 0);
+    }
+
     //swap Sans' direction of motion when he gets to a certain position
     if (body.getPosition().x <= distance) {
         dodgeDirection = true;
-    }
-    
-    //moves Sans according to his set direction
-    if (dodgeDirection == false) {
-        moveFull(-speed, 0);
-    } else {
-        moveFull(speed, 0);
+        dodgeSpeed = 5;
     }
 
     //determines whether sans should stop moving
-    if (body.getPosition().x >= endPosition)
-    {
+    if (body.getPosition().x >= endPosition) {
         //forces Sans to return to idle
         body.setPosition(endPosition, body.getPosition().y);
         head.setPosition(endPosition, head.getPosition().y);
         leg.setPosition(endPosition, leg.getPosition().y);
         isIdle = true;
         dodgeDirection = false;
+        dodgeSpeed = 7;
     }
 }

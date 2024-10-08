@@ -15,11 +15,10 @@ class GameMaster
         
         Time sansTimer;
         
-    
     public:
         GameMaster(int sizeX, int sizeY, string title) {
             win = new RenderWindow(VideoMode(sizeX, sizeY), title);
-            sans = new Sans(sizeX/2.0f, sizeY/2.0f, 1, 2, "assets/sansFace.png", "assets/sansTorso.png", "assets/sansLeg.png");
+            sans = new Sans(sizeX/2.0f, sizeY/2.0f, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
         }
 
         void timer() {
@@ -42,25 +41,14 @@ class GameMaster
                 }
             }
 
-            Vector2u winSize = win->getSize();
-            
-            double dodgeSpeed = 4;
-            double waitTime = 1;
-
-            //sans dodge sequence
-            if (sans->getIsIdle() == false) { //first check if sans is called to move
-                //call dodge function normally when sans needs to move left
-                if (sans->getDodgeDirection() == false) { 
-                    sans->dodge(dodgeSpeed, (winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f);
-                    sansTimer = clock.getElapsedTime();
-                //if sans needs to move right, we have to wait (waitTime) second(s) before he can do so
-                } else if (clock.getElapsedTime().asSeconds() > sansTimer.asSeconds() + waitTime) {
-                    sans->dodge(dodgeSpeed, (winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f);   
-                }
-            }
+            if (sans->getIsIdle() == false) { // check if sans is called to move
+                Vector2u winSize = win->getSize();
+                sans->dodge((winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f); // perform his dodge sequence
+            } 
                  
             win->clear();
             sans->draw(win);
+            
             win->display();
         }
 
