@@ -22,8 +22,10 @@ class Soul {
         int maxHeight;
         Vector2f gravity;
         Vector2f position;
+        int intermissionPositionCount;
+
     public:
-        Soul(Board* board, int setMaxHealth, float setSpeed, int setMaxHeight) {
+        Soul(Board* board, int setMaxHealth, float setSpeed, int setMaxHeight, bool isIntermission) {
             maxHealth = setMaxHealth;
             health = maxHealth;
             karma = 0;
@@ -31,10 +33,14 @@ class Soul {
             maxHeight = setMaxHeight;
             isRed = true;
 
-            redTexture.loadFromFile("assets/red_soul.png");
-            blueTexture.loadFromFile("assets/blue_soul.png");
+            redTexture.loadFromFile("./sprites/redSoulSprite.png");
+            blueTexture.loadFromFile("./sprites/blueSoulSprite.png");
 
+            if (isIntermission == false){
             position = board->getCenter();
+            }else{
+            position = Vector2f(45,450);
+            }
 
             soul.setTexture(redTexture);
             soul.setOrigin(Vector2f(8,8));
@@ -78,19 +84,120 @@ class Soul {
         void moveLeft(){
             if (isRed) {
                 soul.move(Vector2f(-speedRed,0));
-            } else {
+            }else{
 
             }
+   
         }
 
         // Moves the soul according to the right arrow
         void moveRight(){
             if (isRed) {
-                soul.move(Vector2f(speedRed,0));
+                soul.move(Vector2f(speedRed,0));}
+            else{
+                
+            }
+        }
+
+        //intermission movement
+           // Moves the soul according to the up arrow intermission
+        void intermissionMoveUp() {
+            if (isRed) {
+                soul.move(Vector2f(0,-speedRed));
             } else {
 
             }
         }
+
+        // Moves the soul according to the down arrow intermission
+        void intermissionMoveDown(){
+            if (isRed) {
+                soul.move(Vector2f(0,speedRed));
+            } else {
+
+            }
+        }
+
+        // Moves the soul according to the left arrow intermission
+        void intermissionMoveLeft(){
+            if (isRed) {
+               if (getIntermissionPositionCount()< 0){
+            intermissionPositionCount = 3;
+           }
+            if (isRed) {
+                switch (intermissionPositionCount)
+                {
+                case 0:
+                    changePosition(Vector2f(47.5f,450.0f));
+                    intermissionPositionCount = -1;
+                    break;
+                
+                case 1:
+                    changePosition(Vector2f(197.5f,450.0f));
+                    intermissionPositionCount = 0;
+                    break;
+
+                case 2:
+                    changePosition(Vector2f(357.5f,450.0f));
+                    intermissionPositionCount = 1;
+                    break;
+
+                case 3:
+                    changePosition(Vector2f(507.5f,450.0f));
+                    intermissionPositionCount = 2;
+                    break;
+
+                default:
+                    break;
+                }
+            }else{
+
+            }
+            }
+        }
+
+        // Moves the soul according to the right arrow intermission
+        void intermissionMoveRight(){
+           if (getIntermissionPositionCount()> 3){
+            intermissionPositionCount = 0;
+           }
+            if (isRed) {
+                switch (intermissionPositionCount)
+                {
+                case 0:
+                    changePosition(Vector2f(47.5f,450.0f));
+                    intermissionPositionCount = 1;
+                    break;
+                
+                case 1:
+                    changePosition(Vector2f(197.5f,450.0f));
+                    intermissionPositionCount = 2;
+                    break;
+
+                case 2:
+                    changePosition(Vector2f(357.5f,450.0f));
+                    intermissionPositionCount = 3;
+                    break;
+
+                case 3:
+                    changePosition(Vector2f(507.5f,450.0f));
+                    intermissionPositionCount = 4;
+                    break;
+
+                default:
+                    break;
+                }
+                }
+            else{
+
+            }
+        }
+
+        int getIntermissionPositionCount(){
+            return intermissionPositionCount;
+        }
+
+
 
         // Returns the max health
         int getMaxHealth() {return maxHealth;}

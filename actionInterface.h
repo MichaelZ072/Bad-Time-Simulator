@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "BulletBoard.h"
+#include "Soul.h"
 
 using namespace std;
 using namespace sf;
@@ -15,152 +16,129 @@ class actionInterface {
   Texture itemIdleTexture;
   Texture mercyIdleTexture;
   Texture levelTexture;
-  Texture bulletBoardTexture;
-  Texture redSoulTexture;
-  Texture blueSoulTexture;
+  Texture actSelectedTexture;
+  Texture fightSelectedTexture;
+  Texture itemSelectedTexture;
+  Texture mercySelectedTexture;
 
   // Sprite creation
-  Sprite actIdle;
-  Sprite fightIdle;
-  Sprite itemIdle;
-  Sprite mercyIdle;
+  Sprite actSprite;
+  Sprite fightSprite;
+  Sprite itemSprite;
+  Sprite mercySprite;
   Sprite levelSprite;
-  Sprite bulletBoardSprite;
-  Sprite redSoulSprite;
-  Sprite blueSoulSprite;
 
 
   int currentHealth;  // An integer that represents the current health
   bool shiftOn;       // A boolean that checks for the shift input
-  bool isRed;         // A boolean for whether the soul is red or not
   bool isAttackMode;
+  int intermissionPositionCount;
+  bool isFightIdle;
+  bool isActIdle;
+  bool isItemIdle;
+  bool isMercyIdle;
+
 
  public:
  
-  actionInterface(int health, bool isAttackMode) {
+  actionInterface(int health, bool isAttackMode, Soul* soul) {
     currentHealth = health;
 
 if (isAttackMode == true){
   
   //fight sprite idle
-    if (!fightIdleTexture.loadFromFile("./sprites/fightSpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    fightIdle.setTexture(fightIdleTexture);
-    fightIdle.setPosition(30, 430);
-    fightIdle.scale(0.7f, 0.65);
+    loadFromFile("./sprites/fightSpriteIdle.png");
+    fightSprite.setTexture(fightIdleTexture);
+    fightSprite.setPosition(30, 430);
+    fightSprite.scale(0.7f, 0.65);
   //act sprite idle
-    if (!actIdleTexture.loadFromFile("./sprites/actSpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    actIdle.setTexture(actIdleTexture);
-    actIdle.setPosition(180, 430);
-    actIdle.scale(0.7f, 0.65);
+    actSprite.setTexture(actIdleTexture);
+    actSprite.setPosition(180, 430);
+    actSprite.scale(0.7f, 0.65);
   
   //item sprite idle
-  if (!itemIdleTexture.loadFromFile("./sprites/itemSpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    itemIdle.setTexture(itemIdleTexture);
-    itemIdle.setPosition(340, 430);
-    itemIdle.scale(0.7f, 0.65);
+    itemSprite.setTexture(itemIdleTexture);
+    itemSprite.setPosition(340, 430);
+    itemSprite.scale(0.7f, 0.65);
 
   //mercy sprite idle
-  if (!mercyIdleTexture.loadFromFile("./sprites/mercySpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    mercyIdle.setTexture(mercyIdleTexture);
-    mercyIdle.setPosition(490, 430);
-    mercyIdle.scale(0.7f, 0.65);
+    mercySprite.setTexture(mercyIdleTexture);
+    mercySprite.setPosition(490, 430);
+    mercySprite.scale(0.7f, 0.65);
     
-  //level sprite idle
-    if (!levelTexture.loadFromFile("./sprites/levelSprite.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
+  //level sprite idlew
     levelSprite.setTexture(levelTexture);
     levelSprite.setPosition(25, 395);
     
    //intermission phase 
 }else{
-  if (!actIdleTexture.loadFromFile("./sprites/actSpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    actIdle.setTexture(actIdleTexture);
-    actIdle.setPosition(175, 435);
-    actIdle.scale(0.7f, 0.7);
+  switch (soul->getIntermissionPositionCount())
+  {
+  case 1:
+    fightSprite.setTexture(fightSelectedTexture);
+    fightSprite.setPosition(30, 430);
+    fightSprite.scale(1.05, 0.925);
+    break;
 
-    if (!fightIdleTexture.loadFromFile("./sprites/fightSpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    fightIdle.setTexture(fightIdleTexture);
-    fightIdle.setPosition(0, 435);
-    fightIdle.scale(0.7f, 0.7);
+ // default:
+   // break;
+  }
+  cout<<soul->getIntermissionPositionCount()<< endl;
+  //fight sprite idle
+    //fightSprite.setTexture(fightIdleTexture);
+    //fightSprite.setPosition(30, 430);
+    //fightSprite.scale(0.7f, 0.65);
+  //act sprite idle
+    actSprite.setTexture(actIdleTexture);
+    actSprite.setPosition(180, 430);
+    actSprite.scale(0.7f, 0.65);
   
-  if (!itemIdleTexture.loadFromFile("./sprites/itemSpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    itemIdle.setTexture(itemIdleTexture);
-    itemIdle.setPosition(350, 435);
-    itemIdle.scale(0.7f, 0.7);
+  //item sprite idle
+    itemSprite.setTexture(itemIdleTexture);
+    itemSprite.setPosition(340, 430);
+    itemSprite.scale(0.7f, 0.65);
 
-  if (!mercyIdleTexture.loadFromFile("./sprites/mercySpriteIdle.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    mercyIdle.setTexture(mercyIdleTexture);
-    mercyIdle.setPosition(525, 435);
-    mercyIdle.scale(0.7f, 0.7);
+  //mercy sprite idle
+    mercySprite.setTexture(mercyIdleTexture);
+    mercySprite.setPosition(490, 430);
+    mercySprite.scale(0.7f, 0.65);
     
-    if (!levelTexture.loadFromFile("./sprites/levelSprite.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
+  //level sprite idlew
     levelSprite.setTexture(levelTexture);
-    levelSprite.setPosition(0, 400);
-    
-    if (!redSoulTexture.loadFromFile("./sprites/redSoulSprite.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    redSoulSprite.setTexture(redSoulTexture);
-    redSoulSprite.setPosition(0, 400);
+    levelSprite.setPosition(25, 395);
 
-    if (!blueSoulTexture.loadFromFile("./sprites/blueSoulSprite.png")) {
-      cout << "This texture is unable to load" << endl;
-    }
-    blueSoulSprite.setTexture(blueSoulTexture);
-    blueSoulSprite.setPosition(0, 400);
+  }
+  }
+void fightSwitchIdle() {
+    fightSprite.setTexture(fightIdleTexture);
+    fightSprite.setPosition(30, 430);
+    fightSprite.scale(0.7f, 0.65);
+        }
 
+void fightSwitchSelected(){
+  fightSprite.setTexture(fightSelectedTexture);
+    fightSprite.setPosition(30, 430);
+    fightSprite.scale(1.05, 0.925);
 }
 
-  }
 
   // Getter to access the sprite
-  sf::Sprite& getActIdle(){
-   return actIdle; 
+  sf::Sprite& getAct(){
+   return actSprite; 
   }
-  sf::Sprite& getFightIdle(){
-    return fightIdle;
+  sf::Sprite& getFight(){
+    return fightSprite;
   }
-   sf::Sprite& getItemIdle(){
-    return itemIdle;
+   sf::Sprite& getItem(){
+    return itemSprite;
   }
-  sf::Sprite& getMercyIdle(){
-    return mercyIdle;
+  sf::Sprite& getMercy(){
+    return mercySprite;
   }
 sf::Sprite& getLevelSprite(){
     return levelSprite;
   }
-sf::Sprite& getBulletBoardSprite(){
-    return bulletBoardSprite;
-  }
-  sf::Sprite& getRedSoulSprite(){
-    return redSoulSprite;
-  }
-  sf::Sprite& getBlueSoulSprite(){
-    return blueSoulSprite;
-  }
 
-  void intermissionPhase(){
-    
-  }
 
 
   void doAction();
