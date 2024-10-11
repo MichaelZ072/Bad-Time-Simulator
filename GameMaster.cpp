@@ -1,8 +1,12 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <string>
+#include <vector>
 
 #include "BulletBoard.h"
 #include "Soul.h"
+
+#include "BlasterAttackLevel_1.h"
 
 using namespace sf;
 using namespace std;
@@ -11,15 +15,21 @@ class GameMaster
 {
     private:
         RenderWindow* win;
+        int winSizeX;
+        int winSizeY;
         Board* board;
         Soul* soul;
+        BlasterAttackLevel_1* blasterAttackLevel_1;
         Clock clock;
         Time time;
     public:
         GameMaster(int sizeX, int sizeY, string title) {
-            win = new RenderWindow(VideoMode(sizeX, sizeY), title);
+            winSizeX = sizeX;
+            winSizeY = sizeY;
+            win = new RenderWindow(VideoMode(winSizeX, winSizeY), title);
             board = new Board(sizeX, sizeY, 5);
-            soul = new Soul(board, 92, 6, 20);
+            soul = new Soul(board, 92, 5, 20);
+            blasterAttackLevel_1 = new BlasterAttackLevel_1;
         }
 
         void timer(){
@@ -35,24 +45,44 @@ class GameMaster
             Event event;
 
             while (win->pollEvent(event)) {
-                if(event.type == Event::Closed) {
+                if (event.type == Event::Closed) {
                     win->close();
                 }
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                soul->moveUp();
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Down)) {
+                soul->moveDown();
+            }
 
-                if(Keyboard::isKeyPressed(Keyboard::Up)) {
-                    soul->moveUp();
-                } else if (Keyboard::isKeyPressed(Keyboard::Down)) {
-                    soul->moveDown();
-                } else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-                    soul->moveLeft();
-                } else if (Keyboard::isKeyPressed(Keyboard::Right)) {
-                    soul->moveRight();
-                }
+            if (Keyboard::isKeyPressed(Keyboard::Left)) {
+                soul->moveLeft();
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Right)) {
+                soul->moveRight();
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Space)) {
+                blasterAttackLevel_1->startAttack();
+                //board->startAnimation();
+            }
+
+            if (blasterAttackLevel_1->checkAttack()) {
+                blasterAttackLevel_1->attack();
+            }
+
+            if (board->checkAnimation()) {
+                board->changeIntermission1(winSizeX, winSizeY);
             }
 
             win->clear();
             board->draw(win);
             soul->draw(win);
+            blasterAttackLevel_1->draw(win);
             win->display();
         }
 
@@ -62,7 +92,7 @@ class GameMaster
 
 int main() 
 {
-    GameMaster game(640, 480, "OOP Game");
+    GameMaster game(640, 480, "Bad Time Simulator");
     game.timer();
 
     return 0;
