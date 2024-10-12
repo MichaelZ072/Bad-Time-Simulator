@@ -34,7 +34,7 @@ class Sans
         Clock clock;
         Time time;
 
-        double dodgeSpeed = 7;
+        double dodgeSpeed = 10;
         double waitTime = 1;
 
         bool dialogueVisible;
@@ -65,7 +65,9 @@ class Sans
         void moveFull(double offsetX, double offsetY); // movement for sans entire body
         void dodge(double distance, double endPosition); // whereby sans will only dodge to the left
 
-        ~Sans();
+        ~Sans() {
+            ;
+        }
         
 };
 

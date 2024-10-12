@@ -57,10 +57,7 @@ Sans::Sans(int x, int y, int health, string headTextureFile, string bodyTextureF
     text.setFillColor(Color::Black);
     
     // creating the speech bubble
-    if (!speechBubbleTexture.loadFromFile("assets/speechBubble.png")) { // replace string with a default constructor string
-        // print error if texture failed to load
-        cout << "Could not load speech bubble texture";
-    };
+    speechBubbleTexture.loadFromFile("assets/speechBubble.png"); // replace string with a default constructor string
     speechBubble.setTexture(speechBubbleTexture);
 
     Vector2u speechBubbleTextureSize = speechBubbleTexture.getSize();
@@ -154,6 +151,7 @@ void Sans::moveFull(double offsetX, double offsetY)
     leg.move(offsetX, offsetY); 
 }
 
+// incorporate variables for dodge deccel
 void Sans::dodge(double distance, double endPosition)
 {
     //moves Sans according to his set direction
@@ -161,19 +159,22 @@ void Sans::dodge(double distance, double endPosition)
         moveFull(-dodgeSpeed, 0);
         time = clock.getElapsedTime(); // gets elapsed time
         
-        if (dodgeSpeed >= 2) {
-            dodgeSpeed -= 0.25;
-        } 
+        if (dodgeSpeed >= 1) {
+            dodgeSpeed -= 0.48;
+        }
 
     // if sans needs to move right, we have to wait (waitTime) second(s) before he can do so
     } else if (clock.getElapsedTime().asSeconds() > time.asSeconds() + waitTime) { // moving right
         moveFull(dodgeSpeed, 0);
+        if (dodgeSpeed <= 11) {
+            dodgeSpeed += 1;
+        }
     }
 
     //swap Sans' direction of motion when he gets to a certain position
     if (body.getPosition().x <= distance) {
         dodgeDirection = true;
-        dodgeSpeed = 5;
+        dodgeSpeed = 2;
     }
 
     //determines whether sans should stop moving
@@ -184,6 +185,6 @@ void Sans::dodge(double distance, double endPosition)
         leg.setPosition(endPosition, leg.getPosition().y);
         isIdle = true;
         dodgeDirection = false;
-        dodgeSpeed = 7;
+        dodgeSpeed = 10;
     }
 }

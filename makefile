@@ -1,4 +1,4 @@
-1: oopgame.cpp Sans.cpp
-	g++ oopgame.cpp Sans.cpp  -lsfml-graphics -lsfml-window -lsfml-system -o game
+1: oopgame.cpp Sans.cpp Bones.cpp LongBone.cpp MediumBone.cpp
+	g++ oopgame.cpp Sans.cpp Bones.cpp LongBone.cpp MediumBone.cpp -lsfml-graphics -lsfml-window -lsfml-system -o game
 	./game
 	
