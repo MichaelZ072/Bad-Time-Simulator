@@ -8,6 +8,8 @@
 #include "LongBone.h"
 #include "MediumBone.h"
 #include "BoneWall.h"
+#include "Cover.h"
+
 
 using namespace sf;
 using namespace std;
@@ -23,6 +25,7 @@ class GameMaster
         LongBone* longBone;
         MediumBone* mediumBone;
         BoneWall* boneWall;
+        Cover* shader;
 
         Clock clock;
         Time time;
@@ -36,6 +39,7 @@ class GameMaster
             sans = new Sans(sizeX/2.0f, board->getCenter().y - board->getSize().y / 2.0f - 20, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
             mediumBone = new MediumBone(sizeX / 2.0f, sizeY / 2.0f, 100, 0); 
             boneWall = new BoneWall(sizeX / 2.0f, sizeY / 2.0f, 10);
+            shader = new Cover(board, sizeX, sizeY); 
         }
 
         void timer() {
@@ -81,7 +85,7 @@ class GameMaster
                     if (!mediumBone->getIsActive()) {
                         mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 3);
                     }
-                    
+
                     if (!boneWall->getIsActive()) {
                         // spawn a bone wall starting from the bottom and going up
                         // boneWall->spawn(Vector2f(board->getCenter().x, board->getCenter().y + board->getSize().y / 2.0f + boneWall->getSize().x / 2.0f), 90, 0);
@@ -135,14 +139,20 @@ class GameMaster
              
             win->clear();
 
+            mediumBone->draw(win);            
+            boneWall->draw(win);
+
+            // everything above shader will appear behind it
+            shader->draw(win);
+            // everything below shader will appear above it
+
             sans->draw(win);
             soul->draw(win);
-
-            mediumBone->draw(win);
-
             board->draw(win);
 
-            boneWall->draw(win);
+            
+
+            
                     
             win->display();
         }
@@ -154,6 +164,7 @@ class GameMaster
             delete sans;
             // delete longBone;
             delete mediumBone;
+            delete shader;
         }
 };
 
