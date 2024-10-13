@@ -7,6 +7,7 @@
 
 #include "LongBone.h"
 #include "MediumBone.h"
+#include "BoneWall.h"
 
 using namespace sf;
 using namespace std;
@@ -21,6 +22,7 @@ class GameMaster
         Sans* sans;
         LongBone* longBone;
         MediumBone* mediumBone;
+        BoneWall* boneWall;
 
         Clock clock;
         Time time;
@@ -33,6 +35,7 @@ class GameMaster
             // replace 80 with board dimensions
             sans = new Sans(sizeX/2.0f, board->getCenter().y - board->getSize().y / 2.0f - 20, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
             mediumBone = new MediumBone(sizeX / 2.0f, sizeY / 2.0f, 100, 0); 
+            boneWall = new BoneWall(sizeX / 2.0f, sizeY / 2.0f, 10);
         }
 
         void timer() {
@@ -76,26 +79,46 @@ class GameMaster
                 if (Keyboard::isKeyPressed(Keyboard::Space)) {
                     // prevents spamming space to reset position
                     if (!mediumBone->getIsActive()) {
-                        mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0);
+                        mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 3);
+                    }
+                    
+                    if (!boneWall->getIsActive()) {
+                        // spawn a bone wall starting from the bottom and going up
+                        // boneWall->spawn(Vector2f(board->getCenter().x, board->getCenter().y + board->getSize().y / 2.0f + boneWall->getSize().x / 2.0f), 90, 0);
+
+                        // spawn a bone wall starting from the top and going down
+                        // boneWall->spawn(Vector2f(board->getCenter().x, board->getCenter().y - board->getSize().y / 2.0f - boneWall->getSize().x / 2.0f), 90, 2);
+
+                        // spawn a bone wall starting from the left and going right
+                        // boneWall->spawn(Vector2f(board->getCenter().x - board->getSize().x / 2.0f - boneWall->getSize().x / 2.0f, board->getCenter().y), 0, 1);
+
+                        // spawn a bone wall starting from the right and going left
+                        boneWall->spawn(Vector2f(board->getCenter().x + board->getSize().x / 2.0f + boneWall->getSize().x / 2.0f, board->getCenter().y), 0, 3);
                     }
                 }
             }
 
             // move bone
             if (mediumBone->getIsActive()) {
-                mediumBone->move(5,3);
+                mediumBone->callAttack(5, 1);
+                if (mediumBone->attackSoul(soul)) {
+                    cout << "damage taken!" << endl;
+                }
             }
 
-            if (sans->getIsIdle() == false) { // check if sans is called to move
+            if (boneWall->getIsActive()) {
+                boneWall->callAttack(15, 0.5, 1.5, 4);
+                if (boneWall->checkCollision(soul)) {
+                    cout << "damage taken!" << endl;
+                }
+            }
+
+            if (!sans->getIsIdle()) { // check if sans is called to move
                 Vector2u winSize = win->getSize();
                 sans->dodge((winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f); // perform his dodge sequence
             }
 
             
-
-            if (mediumBone->attackSoul(soul)) {
-                cout << "damage taken!" << endl;
-            }
 
 
 
@@ -116,9 +139,11 @@ class GameMaster
             soul->draw(win);
 
             mediumBone->draw(win);
-            
+
             board->draw(win);
-            
+
+            boneWall->draw(win);
+                    
             win->display();
         }
 

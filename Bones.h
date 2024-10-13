@@ -15,9 +15,10 @@ using namespace sf;
 class Bones : public AttackInterface {
     protected:
         //bool isWhite;
-
+        
         bool isActive;
         int boneSpeed;
+        int moveDirection;
         
         Texture boneTexture;
         Sprite bone;
@@ -32,19 +33,24 @@ class Bones : public AttackInterface {
         */
                               
     public:
+        // might even change constructor
         Bones(int x, int y, int boneSpeed, string boneTextureFile);
         Bones();
 
         // void setBoneSpeed(int boneSpeed) { this->boneSpeed = boneSpeed; }
         // bool getBoneSpeed() { return boneSpeed; }
 
-        void spawn(Vector2f setPosition, float setRotation)
+        void spawn(Vector2f setPosition, double setRotation, int setDirection)
         {
             // spawn and set up original position of bone
             bone.setRotation(setRotation);
             bone.setPosition(setPosition.x, setPosition.y);
+            moveDirection = setDirection;
             isActive = true;  
         }
+
+        void setMoveDirection(int moveDirection) { this->moveDirection = moveDirection; }
+        int getMoveDirection() { return moveDirection; }
 
         /*
         void moveLeft(int speed);

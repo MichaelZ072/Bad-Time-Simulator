@@ -4,7 +4,8 @@ Bones::Bones(int x, int y, int boneSpeed, string boneTextureFile)
 {
     this->boneSpeed = boneSpeed;
 
-    this->isActive = false;
+    moveDirection = 0;
+    isActive = false;
 
     // load texture
     boneTexture.loadFromFile(boneTextureFile);
