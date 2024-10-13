@@ -7,6 +7,7 @@
 #include "Soul.h"
 
 #include "BlasterAttackLevel_1.h"
+#include "BlasterAttackLevel_2.h"
 
 using namespace sf;
 using namespace std;
@@ -20,16 +21,20 @@ class GameMaster
         Board* board;
         Soul* soul;
         BlasterAttackLevel_1* blasterAttackLevel_1;
+        BlasterAttackLevel_2* blasterAttackLevel_2;
         Clock clock;
         Time time;
+        int deltaFrames;
     public:
         GameMaster(int sizeX, int sizeY, string title) {
             winSizeX = sizeX;
             winSizeY = sizeY;
+            deltaFrames = 0;
             win = new RenderWindow(VideoMode(winSizeX, winSizeY), title);
             board = new Board(sizeX, sizeY, 5);
             soul = new Soul(board, 92, 5, 20);
             blasterAttackLevel_1 = new BlasterAttackLevel_1;
+            blasterAttackLevel_2 = new BlasterAttackLevel_2;
         }
 
         void timer(){
@@ -72,7 +77,16 @@ class GameMaster
             }
 
             if (blasterAttackLevel_1->checkAttack()) {
-                blasterAttackLevel_1->attack();
+                blasterAttackLevel_1->attack(soul);
+                deltaFrames++;
+            }
+
+            if (blasterAttackLevel_1->checkAttack() && deltaFrames > 26) {
+                blasterAttackLevel_2->startAttack();
+            }
+
+            if (blasterAttackLevel_2->checkAttack()) {
+                blasterAttackLevel_2->attack(soul);
             }
 
             if (board->checkAnimation()) {
@@ -83,6 +97,7 @@ class GameMaster
             board->draw(win);
             soul->draw(win);
             blasterAttackLevel_1->draw(win);
+            blasterAttackLevel_2->draw(win);
             win->display();
         }
 

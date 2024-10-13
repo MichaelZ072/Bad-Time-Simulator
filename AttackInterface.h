@@ -3,7 +3,7 @@
 
 class AttackInterface {
     public:
-        virtual bool checkCollision() = 0;
+        virtual void checkCollision(Soul* soul) = 0;
 };
 
 #endif

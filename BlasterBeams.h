@@ -2,10 +2,9 @@
 #define BLASTERBEAMS_H
 
 #include <SFML/Graphics.hpp>
-#include "AttackInterface.h"
 #include "GasterBlasters.h"
 
-class BlasterBeams : public AttackInterface {
+class BlasterBeams {
     private:
         RectangleShape beam;
         Vector2f beamScale;
@@ -71,6 +70,8 @@ class BlasterBeams : public AttackInterface {
         // Stops the animation
         void stopAnimation() {inAnimation = false;}
 
+        bool checkFired() {return fired;}
+
         // This is responsible for all the logic when the beam is fired
         void fire(Sprite blaster) {
             beam.setOrigin(Vector2f((beam.getSize().x / 2), (blaster.getOrigin().y - 5)* beamScale.y * -1));
@@ -99,8 +100,13 @@ class BlasterBeams : public AttackInterface {
             float t;
             t = (deltaFrames - stageStartTimes[stage]) / stageDurations[stage];
 
-            if (t < 0) t = 0;
-            if (t > 1) t = 1;
+            if (t < 0) {
+                t = 0;
+            }
+            
+            if (t > 1) {
+                t = 1;
+            }
 
             float easedT;
             if (t < 0.5) {
@@ -132,14 +138,14 @@ class BlasterBeams : public AttackInterface {
             }
 
             beam.setScale(scale, 1);
-            if (transparency < 0) transparency = 0;
+            if (transparency < 0) {
+                transparency = 0;
+            }
+            
             beam.setFillColor(sf::Color(255, 255, 255, transparency));
         }
 
-        // Checks for collisions between the attacks and the player
-        bool checkCollision() {
-            return false;
-        }
+        FloatRect getGlobalBounds() {return beam.getGlobalBounds();}
 
         // Draws the beam
         void draw(RenderWindow* window) {

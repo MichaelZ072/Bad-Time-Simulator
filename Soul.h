@@ -22,6 +22,7 @@ class Soul {
         int maxHeight;
         Vector2f gravity;
         Vector2f position;
+        bool isAlive;
     public:
         Soul(Board* board, int setMaxHealth, float setSpeed, int setMaxHeight) {
             maxHealth = setMaxHealth;
@@ -30,6 +31,7 @@ class Soul {
             speedRed = setSpeed;
             maxHeight = setMaxHeight;
             isRed = true;
+            isAlive = true;
 
             redTexture.loadFromFile("assets/red_soul.png");
             blueTexture.loadFromFile("assets/blue_soul.png");
@@ -95,6 +97,12 @@ class Soul {
         // Returns the max health
         int getMaxHealth() {return maxHealth;}
 
+        // Returns the current health
+        int getHealth() {return health;}
+
+        // Returns the amount of karma
+        int getKarma() {return karma;}
+
         // Adds health to the player up to the max - karma
         void heal(int addHealth) {
             health += addHealth;
@@ -104,16 +112,23 @@ class Soul {
             }
         }
 
-        // Returns the current health
-        int getHealth() {return health;}
-
         // Deals with changing values to do with damage
-        void doDamage() {
-            
+        void doDamage(int damage, int addKarma) {
+            if (health > 1) {
+                health -= damage;
+                karma += addKarma;
+            } else if (health == 1 && karma == 0) {
+                isAlive = false;
+            } else if (health == 1) {
+                karma -= damage;
+            }
+
+            cout << health << endl;
         } 
 
-        // Returns the amount of karma
-        int getKarma() {return karma;}
+        void updateHealth() {
+
+        }
 
         // Teleports the soul to the specified location
         void changePosition(Vector2f newPosition) {
@@ -122,6 +137,16 @@ class Soul {
         }
 
         Vector2f getPosition() {return soul.getPosition();}
+
+        FloatRect getSoulBounds() {
+            FloatRect soulBounds = soul.getGlobalBounds();
+            soulBounds.left -= 6;
+            soulBounds.top -= 6;
+            soulBounds.width += 12;
+            soulBounds.height += 12;
+
+            return soulBounds;
+        }
 
         // Draws the soul
         void draw(RenderWindow* window) {

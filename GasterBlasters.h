@@ -5,12 +5,14 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include "AttackInterface.h"
 #include "BlasterBeams.h"
+#include "Soul.h"
 
 using namespace std;
 using namespace sf;
 
-class GasterBlasters {
+class GasterBlasters : public AttackInterface {
     private:
         BlasterBeams* beam;
         Sprite blaster;
@@ -35,6 +37,7 @@ class GasterBlasters {
         float deltaFrames;
     public:
         GasterBlasters(Vector2f setPosition, Vector2f setScale, float setRotation) {
+            position = setPosition;
             scale = setScale;
             rotation = setRotation;
             texture = new Texture[6];
@@ -54,7 +57,8 @@ class GasterBlasters {
             blaster.setScale(scale);
             size = texture[currentTexture].getSize();
             blaster.setOrigin(Vector2f(float(size.x) / 2, float(size.y) / 2));
-            blaster.setPosition(setPosition);
+            blaster.setPosition(position);
+            blaster.setRotation(rotation);
 
             beam = new BlasterBeams(blaster, scale);
         }
@@ -78,6 +82,10 @@ class GasterBlasters {
         bool checkFlownIn() {return flownIn;}
 
         bool checkFlownOut() {return flownOut;}
+
+        bool checkFired() {return fired;}
+
+        bool firing() {return beam->checkAnimation();}
 
         // Does the animation for the blaster flying in
         void flyIn(Vector2f setNewPos, float setSpeed, float setRotation, int setRotDirection) {
@@ -119,12 +127,29 @@ class GasterBlasters {
             float progressX = distanceX / (totDistance.x / 2);
             float progressY = distanceY / (totDistance.y / 2);
 
-            if (progressRot < 0.05) progressRot = 0.05;
-            if (progressRot > 1) progressRot = 1;
-            if (progressX < 0.05) progressX = 0.05;
-            if (progressX > 1) progressX = 1;
-            if (progressY < 0.05) progressY = 0.05;
-            if (progressY > 1) progressY = 1;
+            if (progressRot < 0.05) {
+                progressRot = 0.05;
+            }
+
+            if (progressRot > 1) {
+                progressRot = 1;
+            }
+
+            if (progressX < 0.05) {
+                progressX = 0.05;
+            }
+
+            if (progressX > 1) {
+                progressX = 1;
+            }
+
+            if (progressY < 0.05) {
+                progressY = 0.05;
+            }
+
+            if (progressY > 1) {
+                progressY = 1;
+            }
 
             // Applying the easing
             float easingRot = maxRotVelocity * progressRot;
@@ -218,21 +243,26 @@ class GasterBlasters {
                 float oppositeRotation;
                 oppositeRotation = (blaster.getRotation()  - 90);
 
-                if (oppositeRotation < 0) oppositeRotation += 360;
-                if (oppositeRotation < 0) oppositeRotation += 360;
+                if (oppositeRotation < 0) {
+                    oppositeRotation += 360;
+                }
 
                 Vector2f direction;
                 direction.x = cos(oppositeRotation * (3.14159265 / double(180))) * maxSpeed;
                 direction.y = sin(oppositeRotation * (3.14159265 / double(180))) * maxSpeed;
 
                 float t = deltaFrames / maxFrames;
-                if (t < 0) t = 0;
-                if (t > 1) t = 1;
+                if (t < 0) {
+                    t = 0;
+                }
+                
+                if (t > 1) {
+                    t = 1;
+                }
 
                 float speed = t * t;
-
                 blaster.move(direction * speed);
-                
+                fired = beam->checkFired();
                 deltaFrames++;
             }
         }
@@ -247,6 +277,15 @@ class GasterBlasters {
         Vector2f getOrigin() {return blaster.getOrigin();}
 
         float getRotation() {return blaster.getRotation();}
+
+        // Checks for collisions between the attacks and the player
+        void checkCollision(Soul *soul) {
+            if (!fired) {
+                if (soul->getSoulBounds().intersects(beam->getGlobalBounds())) {
+                    soul->doDamage(1,6);
+                }
+            }
+        }
 
         // Draws the Gaster Blaster
         void draw(RenderWindow* window){

@@ -1,21 +1,21 @@
-#ifndef BLASTERATTACKLEVEL_1_H
-#define BLASTERATTACKLEVEL_1_H
+#ifndef BLASTERATTACKLEVEL_2_H
+#define BLASTERATTACKLEVEL_2_H
 
 #include <vector>
 #include "GasterBlasters.h"
 #include "BlasterData.h"
 
-class BlasterAttackLevel_1 {
+class BlasterAttackLevel_2 {
     private:
         vector<BlasterData> blasters;
         bool inAttack;
     public:
-        BlasterAttackLevel_1() {
+        BlasterAttackLevel_2() {
             // Creating the blasters
-            blasters.emplace_back(Vector2f(642, 481), Vector2f(2, 2), 0, Vector2f(452, 366), 5, 90, 1, 0);
-            blasters.emplace_back(Vector2f(642, 481), Vector2f(2, 2), 0, Vector2f(377, 444), 5, 180, -1, 0);
-            blasters.emplace_back(Vector2f(-3, -6), Vector2f(2, 2), 0, Vector2f(186, 241), 5, 270, -1, 0);
-            blasters.emplace_back(Vector2f(-3, -6), Vector2f(2, 2), 0, Vector2f(257, 163), 5, 0, 1, 0);
+            blasters.emplace_back(Vector2f(642, 478), Vector2f(2, 2), 0, Vector2f(450, 440), 5, 135, 1, 0);
+            blasters.emplace_back(Vector2f(0, 475), Vector2f(2, 2), 0, Vector2f(184, 435), 5, 225, -1, 0);
+            blasters.emplace_back(Vector2f(-3, -3), Vector2f(2, 2), 0, Vector2f(186, 170), 5, 315, -1, 0);
+            blasters.emplace_back(Vector2f(642, -3), Vector2f(2, 2), 0, Vector2f(454, 172), 5, 45, 1, 0);
         }
 
         // Check if the attack is running
@@ -77,7 +77,7 @@ class BlasterAttackLevel_1 {
             }
         }
 
-        ~BlasterAttackLevel_1() {
+        ~BlasterAttackLevel_2() {
 
         }
 };
