@@ -1,3 +1,4 @@
+/*
 #ifndef LONGBONE_H
 #define LONGBONE_H
 
@@ -32,3 +33,4 @@ class LongBone : public Bones {
 };
 
 #endif
+*/

@@ -5,7 +5,7 @@
 
 class AttackInterface {
     public:
-        virtual bool checkCollision(Soul* player) = 0;
+        virtual void checkCollision(Soul* soul) = 0;
 };
 
 #endif

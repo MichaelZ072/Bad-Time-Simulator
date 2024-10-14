@@ -23,8 +23,8 @@ class BoneWall : public Bones {
         Time attackTime;
 
     public:
-        BoneWall(int x, int y, int boneSpeed) : Bones(x, y, boneSpeed, "assets/verticalBoneWall.png") {
-            //set properties of indicator so that is starts out contained in the bullet board        
+        BoneWall(int x, int y, int boneSpeed) : Bones(x, y, "assets/verticalBoneWall.png") {
+            // set properties of indicator so that is starts out contained in the bullet board        
             indicatorOriginalSize.x = 158;
             indicatorOriginalSize.y = 158;
 
@@ -44,19 +44,7 @@ class BoneWall : public Bones {
             indicatorSet = false;
         }
 
-        bool checkCollision(Soul *soul)
-        {
-            if (!isActive) {
-                return false;
-            }
-
-            if (soul->getSprite().getGlobalBounds().intersects(bone.getGlobalBounds())) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
+        // only display the bone and indicator when they are active
         void draw(RenderWindow* win) {
             if (!isActive) {
                 return;
@@ -69,10 +57,12 @@ class BoneWall : public Bones {
             }   
         }
 
-        // for this to work accurately the height has to be a multiple of the speed
+        // this function calls the bone's attack by first showing the indicator, then the bones
         void callAttack(int speed, double warningDuration, double attackDuration, int steps) {
+            // we specify the height that the bone should travel in terms of steps * speed
             int height = steps * speed;
 
+            // we first want to set the indicator's property if it hasn't been set already
             if (!indicatorSet) {
                 // set the indicator's dimensions
                 if (moveDirection % 2 == 0) {
@@ -85,7 +75,8 @@ class BoneWall : public Bones {
 
                 // x or y from indicatorOriginalSize does not matter as it is square
                 double offsett = indicatorOriginalSize.x / 2 - height / 2;
-                // set the offsett position of indicator
+                
+                // set the offsett position of indicator depending on which way its going to move
                 switch (moveDirection)
                 {
                 case 0:
@@ -113,7 +104,7 @@ class BoneWall : public Bones {
                 indicatorTime = clock.getElapsedTime();
             }
            
-            // for first few seconds (warningDurtion), show the warning indicator
+            // for first few seconds that the warning timer elapses (warningDurtion), show the warning indicator
             if (clock.getElapsedTime().asSeconds() < (indicatorTime.asSeconds() + warningDuration)) {
                 showIndicator = true;
                 return;
@@ -142,7 +133,7 @@ class BoneWall : public Bones {
                             move(-speed, moveDirection);
                             heightTracker -= speed;
                         
-                        // reset changed attributes after attack has ended 
+                        // reset changed attributes after attack has ended
                         } else {
                             indicatorTimerStarted = false;
                             attackTimerStarted = false;
@@ -154,13 +145,8 @@ class BoneWall : public Bones {
                         }
                     }
                 }                
-            }
-
-
-            
+            }            
         }
-
-
 };
 
 #endif

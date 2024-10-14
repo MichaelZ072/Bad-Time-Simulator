@@ -1,3 +1,4 @@
+/*
 #include "MediumBone.h"
 
 // checks collision based on intersection of sprite boundaries
@@ -7,8 +8,9 @@ bool MediumBone::checkCollision(Soul *soul)
         return false;
     }
 
-    if (soul->getSprite().getGlobalBounds().intersects(bone.getGlobalBounds())) {
+    if (soul->getGlobalBounds().intersects(bone.getGlobalBounds())) {
         return true;
+
     } else {
         soulPosChecker = soul->getPosition();
         return false;
@@ -48,3 +50,4 @@ bool MediumBone::attackSoul(Soul *soul)
         }
     }
 }
+*/

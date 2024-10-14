@@ -19,10 +19,12 @@ class GameMaster
     private:
         RenderWindow* win;
 
+        int winSizeX;
+        int winSizeY;
+
         Board* board;
         Soul* soul;
         Sans* sans;
-        LongBone* longBone;
         MediumBone* mediumBone;
         BoneWall* boneWall;
         Cover* shader;
@@ -32,12 +34,14 @@ class GameMaster
         
     public:
         GameMaster(int sizeX, int sizeY, string title) {
+            winSizeX = sizeX;
+            winSizeY = sizeY;
             win = new RenderWindow(VideoMode(sizeX, sizeY), title);
             board = new Board(sizeX, sizeY, 5);
             soul = new Soul(board, 92, 4, 20);
             // replace 80 with board dimensions
             sans = new Sans(sizeX/2.0f, board->getCenter().y - board->getSize().y / 2.0f - 20, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
-            mediumBone = new MediumBone(sizeX / 2.0f, sizeY / 2.0f, 100, 0); 
+            mediumBone = new MediumBone(sizeX / 2.0f, sizeY / 2.0f); 
             boneWall = new BoneWall(sizeX / 2.0f, sizeY / 2.0f, 10);
             shader = new Cover(board, sizeX, sizeY); 
         }
@@ -79,6 +83,10 @@ class GameMaster
                     soul->moveRight();
                 }
 
+                if (Keyboard::isKeyPressed(Keyboard::Q)) {
+                    board->startAnimation();
+                }
+
                 // spawn bone
                 if (Keyboard::isKeyPressed(Keyboard::Space)) {
                     // prevents spamming space to reset position
@@ -102,19 +110,20 @@ class GameMaster
                 }
             }
 
+            if (board->checkAnimation()) {
+                board->changeIntermission1(winSizeX, winSizeY);
+            }
+
             // move bone
             if (mediumBone->getIsActive()) {
                 mediumBone->callAttack(5, 1);
-                if (mediumBone->attackSoul(soul)) {
-                    cout << "damage taken!" << endl;
-                }
+                mediumBone->checkCollision(soul);
+                
             }
 
             if (boneWall->getIsActive()) {
                 boneWall->callAttack(15, 0.5, 1.5, 4);
-                if (boneWall->checkCollision(soul)) {
-                    cout << "damage taken!" << endl;
-                }
+                // boneWall->checkCollision(soul);
             }
 
             if (!sans->getIsIdle()) { // check if sans is called to move
@@ -123,9 +132,6 @@ class GameMaster
             }
 
             
-
-
-
             /*
             if (longBone->checkPlayerMovement(soul)) {
                 cout << "player has moved to " << longBone->getSoulPosChecker().x << ", " << longBone->getSoulPosChecker().y << endl;
@@ -144,16 +150,13 @@ class GameMaster
 
             // everything above shader will appear behind it
             shader->draw(win);
+            shader->updateCover(board);
             // everything below shader will appear above it
 
             sans->draw(win);
             soul->draw(win);
             board->draw(win);
-
-            
-
-            
-                    
+                  
             win->display();
         }
 

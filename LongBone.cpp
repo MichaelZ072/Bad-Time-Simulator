@@ -1,3 +1,4 @@
+/*
 #include "LongBone.h"
 
 // checks collision based on intersection of sprite boundaries
@@ -43,3 +44,4 @@ bool LongBone::attackSoul(Soul *soul)
         }
     }
 }
+*/

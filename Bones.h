@@ -14,59 +14,98 @@ using namespace sf;
 
 class Bones : public AttackInterface {
     protected:
-        //bool isWhite;
-        
         bool isActive;
-        int boneSpeed;
+        
+        // a value from 0 - 3: 
+        // 0: Up, 1: Right, 2: Down, 3: Left
         int moveDirection;
         
         Texture boneTexture;
+        Vector2u boneTextureSize;
         Sprite bone;
         
         // Vector2f bonePosition;
-        
-        // 
-        /*
-        RectangleShape warningBox;
-        Vector2f warningBoxSize;
-        Vector2f warningBoxPosition;
-        */
-                              
+                
     public:
-        // might even change constructor
-        Bones(int x, int y, int boneSpeed, string boneTextureFile);
-        Bones();
+        Bones(int x, int y, string boneTextureFile) {
+            moveDirection = 0;
+            isActive = false;
 
-        // void setBoneSpeed(int boneSpeed) { this->boneSpeed = boneSpeed; }
-        // bool getBoneSpeed() { return boneSpeed; }
+            // load texture
+            boneTexture.loadFromFile(boneTextureFile);
+            // create sprite from texture
+            bone.setTexture(boneTexture);
 
-        void spawn(Vector2f setPosition, double setRotation, int setDirection)
-        {
-            // spawn and set up original position of bone
+            // set sprite properties
+            boneTextureSize = boneTexture.getSize();
+            bone.setOrigin(boneTextureSize.x / 2.0f, boneTextureSize.y / 2.0f);
+            bone.setPosition(x, y);
+        }
+
+        // basic check collision definition for bone class
+        // virtual as some bones have a property which makes them blue, whereby the checkCollision function would need to be different
+        virtual void checkCollision(Soul *soul) {
+            // do not check for collision if bone isn't active
+            if (!isActive) {
+                return;
+            }
+            
+            // a simple collision detector based on the intersection of sprite bounds
+            if (soul->getSoulBounds().intersects(bone.getGlobalBounds())) {
+                // do damage
+                cout << "damage taken" << endl;
+            } else {
+                cout << "nothing" << endl;
+            }
+        }
+
+        // set the bone to be active and set up original position, rotation, and direction of bone
+        void spawn(Vector2f setPosition, double setRotation, int setDirection) {
             bone.setRotation(setRotation);
             bone.setPosition(setPosition.x, setPosition.y);
             moveDirection = setDirection;
             isActive = true;  
         }
 
+        // move the bone with a certain speed and direction
+        void move(int speed, int direction) {
+            // define direction of movement based on corner
+            switch (direction)
+            {
+            case 0: // move up
+                bone.move(0, -speed);
+                break;
+            case 1: // move right
+                bone.move(speed, 0);
+                break;
+            case 2: // move down
+                bone.move(0, speed);
+                break;
+            case 3: // move left
+                bone.move(-speed, 0);
+                break;
+            default: // else move upwards as default
+                bone.move(0, -speed);
+                break;
+            }
+        }
+
+        void draw(RenderWindow *win) {
+            if (!isActive) {
+                return;
+            } 
+            win->draw(bone);
+        }
+
+        Vector2u getSize() {
+            return boneTexture.getSize();
+        }
+
         void setMoveDirection(int moveDirection) { this->moveDirection = moveDirection; }
         int getMoveDirection() { return moveDirection; }
 
-        /*
-        void moveLeft(int speed);
-        void moveRight(int speed);
-        void moveUp(int speed);
-        void moveDown(int speed);
-        */
-
-        void move(int speed, int direction);
-
         bool getIsActive() { return isActive; }
         void setIsActive(bool isActive) { this->isActive = isActive; }
-
-        Vector2u getSize();
-
-        virtual void draw(RenderWindow* win);
 
         ~Bones() {
             ;
