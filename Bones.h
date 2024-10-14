@@ -15,14 +15,13 @@ using namespace sf;
 class Bones : public AttackInterface {
     protected:
         bool isActive;
-        
-        // a value from 0 - 3: 
-        // 0: Up, 1: Right, 2: Down, 3: Left
-        int moveDirection;
+        int moveDirection; // 0: Up, 1: Right, 2: Down, 3: Left
         
         Texture boneTexture;
         Vector2u boneTextureSize;
         Sprite bone;
+
+        bool used;
         
         // Vector2f bonePosition;
                 
@@ -30,6 +29,7 @@ class Bones : public AttackInterface {
         Bones(int x, int y, string boneTextureFile) {
             moveDirection = 0;
             isActive = false;
+            used = false;
 
             // load texture
             boneTexture.loadFromFile(boneTextureFile);
@@ -52,15 +52,14 @@ class Bones : public AttackInterface {
             
             // a simple collision detector based on the intersection of sprite bounds
             if (soul->getSoulBounds().intersects(bone.getGlobalBounds())) {
-                // do damage
-                cout << "damage taken" << endl;
+                soul->doDamage(1, 6);
             } else {
-                cout << "nothing" << endl;
+                return;
             }
         }
 
         // set the bone to be active and set up original position, rotation, and direction of bone
-        void spawn(Vector2f setPosition, double setRotation, int setDirection) {
+        virtual void spawn(Vector2f setPosition, int setRotation, int setDirection) {
             bone.setRotation(setRotation);
             bone.setPosition(setPosition.x, setPosition.y);
             moveDirection = setDirection;
@@ -68,7 +67,7 @@ class Bones : public AttackInterface {
         }
 
         // move the bone with a certain speed and direction
-        void move(int speed, int direction) {
+        virtual void move(int speed, int direction) {
             // define direction of movement based on corner
             switch (direction)
             {
@@ -90,7 +89,8 @@ class Bones : public AttackInterface {
             }
         }
 
-        void draw(RenderWindow *win) {
+        // virtual as some bones are made of different components
+        virtual void draw(RenderWindow *win) {
             if (!isActive) {
                 return;
             } 

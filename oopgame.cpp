@@ -8,6 +8,7 @@
 #include "LongBone.h"
 #include "MediumBone.h"
 #include "BoneWall.h"
+#include "CustomBone.h"
 #include "Cover.h"
 
 
@@ -27,6 +28,8 @@ class GameMaster
         Sans* sans;
         MediumBone* mediumBone;
         BoneWall* boneWall;
+        CustomBone* custom;
+
         Cover* shader;
 
         Clock clock;
@@ -41,9 +44,10 @@ class GameMaster
             soul = new Soul(board, 92, 4, 20);
             // replace 80 with board dimensions
             sans = new Sans(sizeX/2.0f, board->getCenter().y - board->getSize().y / 2.0f - 20, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
-            mediumBone = new MediumBone(sizeX / 2.0f, sizeY / 2.0f); 
-            boneWall = new BoneWall(sizeX / 2.0f, sizeY / 2.0f, 10);
+            mediumBone = new MediumBone(); 
+            boneWall = new BoneWall();
             shader = new Cover(board, sizeX, sizeY); 
+            custom = new CustomBone(10);
         }
 
         void timer() {
@@ -66,23 +70,6 @@ class GameMaster
                     
                 }
 
-                // player movement
-                if (Keyboard::isKeyPressed(Keyboard::Up)) {
-                    soul->moveUp();
-                }
-                
-                if (Keyboard::isKeyPressed(Keyboard::Down)) {
-                    soul->moveDown();
-                }
-
-                if (Keyboard::isKeyPressed(Keyboard::Left)) {
-                    soul->moveLeft();
-                }
-                
-                if (Keyboard::isKeyPressed(Keyboard::Right)) {
-                    soul->moveRight();
-                }
-
                 if (Keyboard::isKeyPressed(Keyboard::Q)) {
                     board->startAnimation();
                 }
@@ -91,7 +78,7 @@ class GameMaster
                 if (Keyboard::isKeyPressed(Keyboard::Space)) {
                     // prevents spamming space to reset position
                     if (!mediumBone->getIsActive()) {
-                        mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 3);
+                        mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 0);
                     }
 
                     if (!boneWall->getIsActive()) {
@@ -105,25 +92,54 @@ class GameMaster
                         // boneWall->spawn(Vector2f(board->getCenter().x - board->getSize().x / 2.0f - boneWall->getSize().x / 2.0f, board->getCenter().y), 0, 1);
 
                         // spawn a bone wall starting from the right and going left
-                        boneWall->spawn(Vector2f(board->getCenter().x + board->getSize().x / 2.0f + boneWall->getSize().x / 2.0f, board->getCenter().y), 0, 3);
+                        // boneWall->spawn(Vector2f(board->getCenter().x + board->getSize().x / 2.0f + boneWall->getSize().x / 2.0f, board->getCenter().y), 0, 3);
+                    }
+
+                    if (!custom->getIsActive()) {
+                        // right now only works for 270 (horizontal) or 0 (vertical)
+                        custom->spawn(Vector2f(winSizeX, board->getCenter().y), 270, 3);
                     }
                 }
+            }
+
+            
+            // player movement
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                soul->moveUp();
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Down)) {
+                soul->moveDown();
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Left)) {
+                soul->moveLeft();
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Right)) {
+                soul->moveRight();
             }
 
             if (board->checkAnimation()) {
                 board->changeIntermission1(winSizeX, winSizeY);
             }
 
+            // cout << soul->getHealth() << endl;
+
             // move bone
             if (mediumBone->getIsActive()) {
-                mediumBone->callAttack(5, 1);
+                mediumBone->callAttack(5, 1, board->getCenter().y - board->getSize().y / 2.0f);
                 mediumBone->checkCollision(soul);
-                
             }
 
             if (boneWall->getIsActive()) {
                 boneWall->callAttack(15, 0.5, 1.5, 4);
-                // boneWall->checkCollision(soul);
+                boneWall->checkCollision(soul);
+            }
+
+            if (custom->getIsActive()) {
+                custom->callAttack(5, 0, 1, 100);
+                custom->checkCollision(soul);
             }
 
             if (!sans->getIsIdle()) { // check if sans is called to move
@@ -144,14 +160,16 @@ class GameMaster
 
              
             win->clear();
-
-            mediumBone->draw(win);            
+       
             boneWall->draw(win);
 
             // everything above shader will appear behind it
             shader->draw(win);
             shader->updateCover(board);
             // everything below shader will appear above it
+
+            custom->draw(win);
+            mediumBone->draw(win);     
 
             sans->draw(win);
             soul->draw(win);
@@ -168,6 +186,7 @@ class GameMaster
             // delete longBone;
             delete mediumBone;
             delete shader;
+            delete custom;
         }
 };
 

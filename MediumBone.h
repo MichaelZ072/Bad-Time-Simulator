@@ -11,7 +11,7 @@ class MediumBone : public Bones {
         
     public:
         // construct a medium bone using a set texture
-        MediumBone(int x, int y) : Bones(x, y, "assets/verticalBoneMedium.png") { 
+        MediumBone() : Bones(0, 0, "assets/verticalBoneMedium.png") { 
             isWhite = true;
             colourSet = false;
 
@@ -21,7 +21,7 @@ class MediumBone : public Bones {
         }
 
         // we will specify the speed of the attack and mode
-        void callAttack(int speed, bool toggleBlue) {
+        void callAttack(int speed, bool toggleBlue, int finalPosition) {
             // the colour of the sprite changes depending on the mode set
             if (!colourSet) {
                 if (toggleBlue) {
@@ -33,6 +33,41 @@ class MediumBone : public Bones {
                 }
                 // after the colour has been set we do not need to reset it
                 colourSet = true;
+            }
+
+            // end the attack after it reaches/goes past finalPosition
+            switch (moveDirection)
+            {
+            case 0: // moving up case
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 1: // right case
+                if (bone.getPosition().x > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 2: // down case
+                if (bone.getPosition().y > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 3: // left case
+                if (bone.getPosition().x < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            default:
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
             }
 
             // the bone moves depending on the give speed and spawned direction
@@ -65,7 +100,7 @@ class MediumBone : public Bones {
             // normal collision detect for a white bone using basic collision checker
             case 1:
                 if (soul->getSoulBounds().intersects(bone.getGlobalBounds())) {
-                    // do damage;
+                    soul->doDamage(1, 6);
                 } else {
                     // if there is no collision, update the soul's position checker
                     soulPosChecker = soul->getPosition();
@@ -75,8 +110,7 @@ class MediumBone : public Bones {
             // alternate collision detect for a blue bone using basic collision checker combined with movement checker
             case 0:
                 if ((soul->getSoulBounds().intersects(bone.getGlobalBounds())) && checkPlayerMovement(soul)) {
-                    // do damage;
-                    cout << "damage taken" << endl;
+                    soul->doDamage(1, 6);
                 } else {
                     // if there is no collision, update the soul's position checker
                     soulPosChecker = soul->getPosition();

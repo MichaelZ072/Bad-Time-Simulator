@@ -23,7 +23,7 @@ class BoneWall : public Bones {
         Time attackTime;
 
     public:
-        BoneWall(int x, int y, int boneSpeed) : Bones(x, y, "assets/verticalBoneWall.png") {
+        BoneWall() : Bones(0, 0, "assets/verticalBoneWall.png") {
             // set properties of indicator so that is starts out contained in the bullet board        
             indicatorOriginalSize.x = 158;
             indicatorOriginalSize.y = 158;
@@ -133,7 +133,7 @@ class BoneWall : public Bones {
                             move(-speed, moveDirection);
                             heightTracker -= speed;
                         
-                        // reset changed attributes after attack has ended
+                        // reset changed attributes after attack has ended (used = true meaning it will be deleted)
                         } else {
                             indicatorTimerStarted = false;
                             attackTimerStarted = false;
@@ -142,6 +142,7 @@ class BoneWall : public Bones {
                             isActive = false;
                             indicatorSet = false;
                             indicator.setPosition(320,307);
+                            used = true;
                         }
                     }
                 }                
