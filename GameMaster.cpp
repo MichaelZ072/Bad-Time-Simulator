@@ -27,7 +27,9 @@ class GameMaster
         Clock clock;
         Time time;
         int deltaFrames;
+        int phase;
         int level;
+        bool intermission;
     public:
         GameMaster(int sizeX, int sizeY, string title) {
             winSizeX = sizeX;
@@ -42,7 +44,9 @@ class GameMaster
             attacks.push_back(make_unique<BlasterAttackLevel_1>());
             attacks.push_back(make_unique<BlasterAttackLevel_3>());
 
+            phase = 0;
             level = -1;
+            intermission = true;
         }
 
         // This is used to set the framerate of the game, keeping everything consistent
@@ -66,27 +70,15 @@ class GameMaster
                 }
             }
             
-            // Controls player movement using the arrow keys
-            if (Keyboard::isKeyPressed(Keyboard::Up)) {
-                soul->moveUp(board);
+            if (phase == 0) {
+
             }
 
-            if (Keyboard::isKeyPressed(Keyboard::Down)) {
-                soul->moveDown(board);
-            }
+            checkMovement();
 
-            if (Keyboard::isKeyPressed(Keyboard::Left)) {
-                soul->moveLeft(board);
-            }
-            
-            if (Keyboard::isKeyPressed(Keyboard::Right)) {
-                soul->moveRight(board);
-            }
-
-            if (Keyboard::isKeyPressed(Keyboard::Space)) {
+            if (Keyboard::isKeyPressed(Keyboard::Enter)) {
                 level = 0;
                 //board->startAnimation();
-                //attacks.at(0)->startAttack();
             }
 
             if (level == 0) {
@@ -123,11 +115,35 @@ class GameMaster
             for (auto& attack : attacks) {
                 attack->draw(win);
             }
+
             win->display();
         }
 
-        ~GameMaster() {}
+        ~GameMaster() {
+            delete win;
+            delete board;
+            delete soul;
+        }
 
+        // This checks and updates the player based on keypresses
+        void checkMovement() {
+            // Controls player movement using the arrow keys
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                soul->moveUp(board);
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Down)) {
+                soul->moveDown(board);
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Left)) {
+                soul->moveLeft(board);
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Right)) {
+                soul->moveRight(board);
+            }
+        }
 };
 
 int main() 

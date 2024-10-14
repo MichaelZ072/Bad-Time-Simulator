@@ -193,11 +193,6 @@ class Soul {
         void draw(RenderWindow* window) {
             window->draw(soul);
         }
-
-        ~Soul() {
-            ;
-        }
-
 };
 
 #endif

@@ -83,10 +83,6 @@ class BlasterAttackLevel_2 : public AttackLevels { // Change class name and cons
                 blasters.gasterBlaster->draw(window);
             }
         }
-
-        ~BlasterAttackLevel_2() {
-
-        }
 };
 
 #endif

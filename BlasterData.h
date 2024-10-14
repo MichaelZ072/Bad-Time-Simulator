@@ -30,7 +30,7 @@ class BlasterData { // This class is used to store all the data for the attack l
         }
 
         ~BlasterData() {
-
+            //delete[] gasterBlaster;
         }
 };
 

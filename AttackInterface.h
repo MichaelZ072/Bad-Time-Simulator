@@ -3,6 +3,8 @@
 
 class AttackInterface {
     public:
+        AttackInterface() = default;
+        virtual ~AttackInterface() = default;
         virtual void checkCollision(Soul* soul) = 0;
 };
 

@@ -170,10 +170,6 @@ class BlasterBeams {
         void draw(RenderWindow* window) {
             window->draw(beam);
         }
-
-        ~BlasterBeams() {
-
-        }
 };
 
 #endif

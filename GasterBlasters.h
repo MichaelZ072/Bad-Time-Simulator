@@ -343,7 +343,8 @@ class GasterBlasters : public AttackInterface {
         }
 
         ~GasterBlasters() {
-
+            delete beam;
+            delete[] texture;
         }
 };
 
