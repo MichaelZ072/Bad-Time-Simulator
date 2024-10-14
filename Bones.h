@@ -97,15 +97,16 @@ class Bones : public AttackInterface {
             win->draw(bone);
         }
 
-        Vector2u getSize() {
-            return boneTexture.getSize();
-        }
+        Vector2u getSize() { return boneTexture.getSize(); }
 
         void setMoveDirection(int moveDirection) { this->moveDirection = moveDirection; }
         int getMoveDirection() { return moveDirection; }
 
         bool getIsActive() { return isActive; }
         void setIsActive(bool isActive) { this->isActive = isActive; }
+
+        bool getUsed() { return used; }
+        void setUsed(bool used) { this->used = used; }
 
         ~Bones() {
             ;

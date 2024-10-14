@@ -9,7 +9,11 @@
 #include "MediumBone.h"
 #include "BoneWall.h"
 #include "CustomBone.h"
+#include "TinyBone.h"
+#include "ShortBone.h"
+
 #include "Cover.h"
+
 
 
 using namespace sf;
@@ -29,6 +33,9 @@ class GameMaster
         MediumBone* mediumBone;
         BoneWall* boneWall;
         CustomBone* custom;
+        TinyBone* tinyBone;
+        ShortBone* shortBone;
+        LongBone* longBone;
 
         Cover* shader;
 
@@ -48,6 +55,9 @@ class GameMaster
             boneWall = new BoneWall();
             shader = new Cover(board, sizeX, sizeY); 
             custom = new CustomBone(10);
+            tinyBone = new TinyBone();
+            shortBone = new ShortBone();
+            longBone = new LongBone();
         }
 
         void timer() {
@@ -97,7 +107,22 @@ class GameMaster
 
                     if (!custom->getIsActive()) {
                         // right now only works for 270 (horizontal) or 0 (vertical)
-                        custom->spawn(Vector2f(winSizeX, board->getCenter().y), 270, 3);
+                        // custom->spawn(Vector2f(winSizeX, board->getCenter().y), 270, 3);
+                    }
+
+                    if (!tinyBone->getIsActive()) {
+                        // right now only works for 270 (horizontal) or 0 (vertical)
+                        tinyBone->spawn(Vector2f(winSizeX, board->getCenter().y), 0, 3);
+                    }
+
+                    if (!shortBone->getIsActive()) {
+                        // right now only works for 270 (horizontal) or 0 (vertical)
+                        shortBone->spawn(Vector2f(winSizeX, board->getCenter().y), 0, 3);
+                    }
+
+                    if (!longBone->getIsActive()) {
+                        // right now only works for 270 (horizontal) or 0 (vertical)
+                        longBone->spawn(Vector2f(winSizeX, board->getCenter().y), 0, 3);
                     }
                 }
             }
@@ -124,6 +149,21 @@ class GameMaster
                 board->changeIntermission1(winSizeX, winSizeY);
             }
 
+            if (tinyBone->getIsActive()) {
+                tinyBone->callAttack(5, 100);
+                tinyBone->checkCollision(soul);
+            }
+
+            if (shortBone->getIsActive()) {
+                shortBone->callAttack(3, 100);
+                shortBone->checkCollision(soul);
+            }
+
+            if (longBone->getIsActive()) {
+                longBone->callAttack(7, 100);
+                longBone->checkCollision(soul);
+            }
+
             // cout << soul->getHealth() << endl;
 
             // move bone
@@ -141,6 +181,8 @@ class GameMaster
                 custom->callAttack(5, 0, 1, 100);
                 custom->checkCollision(soul);
             }
+
+
 
             if (!sans->getIsIdle()) { // check if sans is called to move
                 Vector2u winSize = win->getSize();
@@ -169,7 +211,10 @@ class GameMaster
             // everything below shader will appear above it
 
             custom->draw(win);
-            mediumBone->draw(win);     
+            mediumBone->draw(win);   
+            tinyBone->draw(win);  
+            shortBone->draw(win);
+            longBone->draw(win);
 
             sans->draw(win);
             soul->draw(win);
@@ -187,6 +232,9 @@ class GameMaster
             delete mediumBone;
             delete shader;
             delete custom;
+            delete tinyBone;
+            delete shortBone;
+            delete longBone;
         }
 };
 

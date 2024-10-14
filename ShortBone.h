@@ -5,14 +5,46 @@
 
 class ShortBone : public Bones {
     public:
-        ShortBone(int x, int y, int boneSpeed) : Bones(x, y, boneSpeed, "assets/verticalBoneShort.png") { }
+        ShortBone() : Bones(0, 0, "assets/verticalBoneShort.png") { }
         
-        bool checkCollision(Soul* soul) {
-            if (soul->getSprite().getGlobalBounds().intersects(bone.getGlobalBounds())) {
-                return true;
-            } else {
-                return false;
+        void callAttack(int speed, int finalPosition) {
+            // end the attack after it reaches/goes past finalPosition
+            switch (moveDirection)
+            {
+            case 0: // moving up case
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 1: // right case
+                if (bone.getPosition().x > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 2: // down case
+                if (bone.getPosition().y > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 3: // left case
+                if (bone.getPosition().x < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            default:
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
             }
+
+            // the bone moves depending on the give speed and spawned direction
+            move(speed, moveDirection);
         }
         
         ~ShortBone() {

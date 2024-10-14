@@ -1,31 +1,52 @@
-/*
 #ifndef LONGBONE_H
 #define LONGBONE_H
 
 #include "Bones.h"
 
 class LongBone : public Bones {
-    private:
-        bool isWhite;
-        Vector2f soulPosChecker;
-
     public:
-        LongBone(int x, int y, int boneSpeed, bool isWhite) : Bones(x, y, boneSpeed, "assets/verticalBoneLong.png"), isWhite(isWhite), soulPosChecker(0, 0) 
-        {
-            if (!isWhite) {
-                bone.setColor(Color::Cyan);
+        LongBone() : Bones(0, 0, "assets/verticalBoneLong.png") { }
+
+        void callAttack(int speed, int finalPosition) {
+            // end the attack after it reaches/goes past finalPosition
+            switch (moveDirection)
+            {
+            case 0: // moving up case
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 1: // right case
+                if (bone.getPosition().x > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 2: // down case
+                if (bone.getPosition().y > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 3: // left case
+                if (bone.getPosition().x < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            default:
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
             }
+
+            // the bone moves depending on the give speed and spawned direction
+            move(speed, moveDirection);
         }
-
-        bool checkCollision(Soul* soul);
-        bool checkPlayerMovement(Soul* soul);
-        bool attackSoul(Soul* soul);
         
-        Vector2f getSoulPosChecker() { return soulPosChecker; }
-
-        bool getIsWhite() { return isWhite; }
-        void setIsWhite(bool isWhite) { this->isWhite = isWhite; }     
-
         ~LongBone() {
             ;
         }
@@ -33,4 +54,3 @@ class LongBone : public Bones {
 };
 
 #endif
-*/
