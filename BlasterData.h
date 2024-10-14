@@ -3,8 +3,8 @@
 
 #include "GasterBlasters.h"
 
-class BlasterData {
-    public:
+class BlasterData { // This class is used to store all the data for the attack level classes,
+    public:         // to make it more organised and reduce the number of vectors needed
         GasterBlasters* gasterBlaster;
         Vector2f initialPosition;
         Vector2f scale;
@@ -16,8 +16,7 @@ class BlasterData {
         unsigned int deltaFrames;
 
         BlasterData(Vector2f setInitialPosition, Vector2f setScale, float setInitialRotation, 
-                    Vector2f setFinalPosition, float setSpeed, float setRotation, int setRotDirection, 
-                    int setDeltaFrames) {
+                    Vector2f setFinalPosition, float setSpeed, float setRotation, int setRotDirection) {
             initialPosition = setInitialPosition;
             scale = setScale;
             initialRotation = setInitialRotation;
@@ -25,7 +24,7 @@ class BlasterData {
             speed = setSpeed;
             finalRotation = setRotation;
             rotDirection = setRotDirection;
-            deltaFrames = setDeltaFrames;
+            deltaFrames = 0;
             
             gasterBlaster = new GasterBlasters(initialPosition, scale, initialRotation);
         }

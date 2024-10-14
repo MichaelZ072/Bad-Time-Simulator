@@ -1,21 +1,22 @@
-#ifndef BLASTERATTACKLEVEL_2_H
+#ifndef BLASTERATTACKLEVEL_2_H // Change headers when coping
 #define BLASTERATTACKLEVEL_2_H
 
 #include <vector>
+#include "AttackLevels.h"
 #include "GasterBlasters.h"
 #include "BlasterData.h"
 
-class BlasterAttackLevel_2 {
+class BlasterAttackLevel_2 : public AttackLevels { // Change class name and constructor and destructor when copying
     private:
         vector<BlasterData> blasters;
         bool inAttack;
     public:
         BlasterAttackLevel_2() {
             // Creating the blasters
-            blasters.emplace_back(Vector2f(642, 478), Vector2f(2, 2), 0, Vector2f(450, 440), 5, 135, 1, 0);
-            blasters.emplace_back(Vector2f(0, 475), Vector2f(2, 2), 0, Vector2f(184, 435), 5, 225, -1, 0);
-            blasters.emplace_back(Vector2f(-3, -3), Vector2f(2, 2), 0, Vector2f(186, 170), 5, 315, -1, 0);
-            blasters.emplace_back(Vector2f(642, -3), Vector2f(2, 2), 0, Vector2f(454, 172), 5, 45, 1, 0);
+            blasters.emplace_back(Vector2f(642, 478), Vector2f(2, 2), 0, Vector2f(450, 440), 5, 135, 1);
+            blasters.emplace_back(Vector2f(0, 475), Vector2f(2, 2), 0, Vector2f(184, 435), 5, 225, -1);
+            blasters.emplace_back(Vector2f(-3, -3), Vector2f(2, 2), 0, Vector2f(186, 170), 5, 315, -1);
+            blasters.emplace_back(Vector2f(642, -3), Vector2f(2, 2), 0, Vector2f(454, 172), 5, 45, 1);
         }
 
         // Check if the attack is running
@@ -25,6 +26,7 @@ class BlasterAttackLevel_2 {
         void startAttack() {
             inAttack = true;
 
+            // Starts attack for all the blasters
             for (auto& blaster : blasters) {
                 blaster.gasterBlaster->startAnimation();
             }
@@ -34,6 +36,7 @@ class BlasterAttackLevel_2 {
         void stopAttack() {
             inAttack = false;
 
+            // Stops the attack for all the blasters
             for (auto& blaster : blasters) {
                 blaster.gasterBlaster->stopAnimation();
             }
@@ -42,6 +45,7 @@ class BlasterAttackLevel_2 {
         // This contains all the code for the attack
         void attack(Soul* soul) {
             for (int i = 0; i < int(blasters.size()); i++) {
+                // Checks if the blaster is not flown in, and then does the fly in animation, else do the fly out animation
                 if (blasters.at(i).gasterBlaster->checkAnimation() && !blasters.at(i).gasterBlaster->checkFlownIn()) {
                     blasters.at(i).gasterBlaster->flyIn(blasters.at(i).finalPosition, blasters.at(i).speed, blasters.at(i).finalRotation, blasters.at(i).rotDirection);
                 } else if (blasters.at(i).gasterBlaster->checkAnimation() && !blasters.at(i).gasterBlaster->checkFlownOut() && blasters.at(i).deltaFrames > 9) {
@@ -51,11 +55,13 @@ class BlasterAttackLevel_2 {
                     }
                 }
 
+                // Once the blasters have flown in, start counting frames for the fly out
                 if (blasters.at(i).gasterBlaster->checkFlownIn()) {
                     blasters.at(i).deltaFrames++;
                 }
             }
 
+            // Checks if the blasters have finished, and then deletes them
             for (int j = 0; j < int(blasters.size());) {
                 if (blasters.at(j).gasterBlaster->checkFired()) {
                     swap(blasters.at(j), blasters.back());
@@ -65,6 +71,7 @@ class BlasterAttackLevel_2 {
                 }
             }
 
+            // Once all the blasters are gone, the attack is done
             if (blasters.empty()) {
                 stopAttack();
             }

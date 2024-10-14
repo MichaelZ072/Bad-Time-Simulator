@@ -127,6 +127,7 @@ class GasterBlasters : public AttackInterface {
             float progressX = distanceX / (totDistance.x / 2);
             float progressY = distanceY / (totDistance.y / 2);
 
+            // Set the edges so it doesn't go over or under the desired values
             if (progressRot < 0.05) {
                 progressRot = 0.05;
             }
@@ -208,7 +209,9 @@ class GasterBlasters : public AttackInterface {
             }
         }
 
+        // This is responsible for the flying out logic
         void flyOut(float maxSpeed, float maxFrames) {
+            // Changes the texture for the animation
             switch (currentTexture) {
                 case 0:
                     changeTexture(1);
@@ -233,25 +236,32 @@ class GasterBlasters : public AttackInterface {
                     break;
             }
 
+            // Starts firing at the correct time by checking the texture
             if (currentTexture > 3) {
                 beam->startAnimation();
             }
 
+            // If firing, do the fly out animation
             if (beam->checkAnimation()) {
                 beam->fire(blaster);
 
+                // Gets the opposite direction of the blaster
                 float oppositeRotation;
                 oppositeRotation = (blaster.getRotation()  - 90);
 
+                // Makes sure it doesn't go under 0 degrees
                 if (oppositeRotation < 0) {
                     oppositeRotation += 360;
                 }
 
+                // Using the opposite direction, create the direction vector
                 Vector2f direction;
                 direction.x = cos(oppositeRotation * (3.14159265 / double(180))) * maxSpeed;
                 direction.y = sin(oppositeRotation * (3.14159265 / double(180))) * maxSpeed;
 
+                // Time variable used to control the ease out
                 float t = deltaFrames / maxFrames;
+
                 if (t < 0) {
                     t = 0;
                 }
@@ -260,6 +270,8 @@ class GasterBlasters : public AttackInterface {
                     t = 1;
                 }
 
+                // Gets the ease out speed, moves the blaster, checks when the animation finishes, 
+                //and then increments the frames
                 float speed = t * t;
                 blaster.move(direction * speed);
                 fired = beam->checkFired();
@@ -276,19 +288,51 @@ class GasterBlasters : public AttackInterface {
         // Returns the origin of the blaster
         Vector2f getOrigin() {return blaster.getOrigin();}
 
+        // Returns the rotation of the blaster
         float getRotation() {return blaster.getRotation();}
 
         // Checks for collisions between the attacks and the player
-        void checkCollision(Soul *soul) {
-            if (!fired) {
-                if (soul->getSoulBounds().intersects(beam->getGlobalBounds())) {
-                    soul->doDamage(1,6);
+        void checkCollision(Soul* soul) {
+            // Get the beam's inverse transform
+            Transform beamInverseTransform = beam->getInverseTransform();
+
+            // Get the Soul's global bounds
+            FloatRect soulBounds = soul->getSoulBounds();
+
+            // Convert Soul's bounding rectangle into a set of points (corners)
+            vector<Vector2f> soulCorners = {
+                {soulBounds.left, soulBounds.top},
+                {soulBounds.left + soulBounds.width, soulBounds.top},
+                {soulBounds.left + soulBounds.width, soulBounds.top + soulBounds.height},
+                {soulBounds.left, soulBounds.top + soulBounds.height}
+            };
+
+            // Transform the Soul's corners into the beam's local space
+            for (auto& corner : soulCorners) {
+                corner = beamInverseTransform.transformPoint(corner);
+            }
+
+            // Get the beam's local bounds
+            FloatRect beamLocalBounds = beam->getLocalBounds();
+
+            // Check if any corner is inside the beam's local bounds
+            bool collision = false;
+            for (const auto& corner : soulCorners) {
+                if (beamLocalBounds.contains(corner)) {
+                    collision = true;
+                    break;
                 }
+            }
+
+            // Add the damage and karma to soul
+            if (collision) {
+                soul->doDamage(1, 6);
             }
         }
 
         // Draws the Gaster Blaster
         void draw(RenderWindow* window){
+            // Only draws the objects if they are in animation
             if (inAnimation) {
                 window->draw(blaster);
             }

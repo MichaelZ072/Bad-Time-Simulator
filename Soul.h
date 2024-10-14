@@ -33,11 +33,12 @@ class Soul {
             isRed = true;
             isAlive = true;
 
+            // Getting the textures
             redTexture.loadFromFile("assets/red_soul.png");
             blueTexture.loadFromFile("assets/blue_soul.png");
 
+            // Creating the soul sprite
             position = board->getCenter();
-
             soul.setTexture(redTexture);
             soul.setOrigin(Vector2f(8,8));
             soul.setPosition(position);
@@ -59,38 +60,76 @@ class Soul {
         }
 
         // Moves the soul according to the up arrow
-        void moveUp() {
+        void moveUp(Board* board) {
             if (isRed) {
-                soul.move(Vector2f(0,-speedRed));
+                soul.setPosition(Vector2f(position.x, position.y -= speedRed));
             } else {
 
             }
+
+            // Checks if the soul is within the board
+            boundaryCheck(board);
         }
 
         // Moves the soul according to the down arrow
-        void moveDown(){
+        void moveDown(Board* board){
             if (isRed) {
-                soul.move(Vector2f(0,speedRed));
+                soul.setPosition(Vector2f(position.x, position.y += speedRed));
             } else {
 
             }
+
+            // Checks if the soul is within the board
+            boundaryCheck(board);
         }
 
         // Moves the soul according to the left arrow
-        void moveLeft(){
+        void moveLeft(Board* board){
             if (isRed) {
-                soul.move(Vector2f(-speedRed,0));
+                soul.setPosition(Vector2f(position.x -= speedRed, position.y));
             } else {
 
             }
+
+            // Checks if the soul is within the board
+            boundaryCheck(board);
         }
 
         // Moves the soul according to the right arrow
-        void moveRight(){
+        void moveRight(Board* board){
             if (isRed) {
-                soul.move(Vector2f(speedRed,0));
+                soul.setPosition(Vector2f(position.x += speedRed, position.y));
             } else {
 
+            }
+
+            // Checks if the soul is within the board
+            boundaryCheck(board);
+        }
+
+        void boundaryCheck(Board* board) {
+            // Gets the bounds for the soul and board
+            FloatRect soulBounds = soul.getGlobalBounds();
+            FloatRect boardBounds(board->getBounds().left + board->getThickness(), 
+                board->getBounds().top + board->getThickness(), 
+                board->getBounds().width - board->getThickness() * 2, 
+                board->getBounds().height - board->getThickness() * 2);
+
+            // Checks if the soul is on the boundary of the board, and then stops it
+            if (soulBounds.left < boardBounds.left) {
+                soul.setPosition(Vector2f(position.x = boardBounds.left + soul.getOrigin().x, position.y));
+            }
+
+            if (soulBounds.top < boardBounds.top) {
+                soul.setPosition(Vector2f(position.x, position.y = boardBounds.top + soul.getOrigin().y));
+            }
+
+            if (soulBounds.left + soulBounds.width > boardBounds.left + boardBounds.width) {
+                soul.setPosition(Vector2f(position.x = boardBounds.left + boardBounds.width - soul.getOrigin().x, position.y));
+            }
+
+            if (soulBounds.top + soulBounds.height > boardBounds.top + boardBounds.height) {
+                soul.setPosition(Vector2f(position.x, position.y = boardBounds.top + boardBounds.height - soul.getOrigin().y));
             }
         }
 
@@ -122,10 +161,9 @@ class Soul {
             } else if (health == 1) {
                 karma -= damage;
             }
-
-            cout << health << endl;
         } 
 
+        // Used to update the health shown in the ui
         void updateHealth() {
 
         }
@@ -136,14 +174,17 @@ class Soul {
             soul.setPosition(position);
         }
 
+        // Gets the position of the soul
         Vector2f getPosition() {return soul.getPosition();}
 
+        // Returns a modified version of the soul's global bounds to give a little grace during attacks
         FloatRect getSoulBounds() {
             FloatRect soulBounds = soul.getGlobalBounds();
-            soulBounds.left -= 6;
-            soulBounds.top -= 6;
-            soulBounds.width += 12;
-            soulBounds.height += 12;
+            // Reducing the hitbox by 6 on all sides
+            soulBounds.left += 6;
+            soulBounds.top += 6;
+            soulBounds.width -= 12;
+            soulBounds.height -= 12;
 
             return soulBounds;
         }

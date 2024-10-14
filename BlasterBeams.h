@@ -31,6 +31,7 @@ class BlasterBeams {
             transparency = 255;
             size = Vector2f(9 * beamScale.x, 1500);
 
+            // Setting the values for the different stages
             stage = 0;
             startScale = 1;
             firstGrowScale = 4;
@@ -38,21 +39,24 @@ class BlasterBeams {
             secondGrowScale = 4.5;
             endScale = 0;
 
+            // Setting the duration for the stages
             stageDurations[0] = 4;
             stageDurations[1] = 4;
             stageDurations[2] = 4;
             stageDurations[3] = 4;
             stageDurations[4] = 12;
-
             stageStartTimes[0] = 0;
 
+            // Finding out the start times
             for (int i = 1; i < 5; i++) {
                 stageStartTimes[i] = stageStartTimes[i - 1] + stageDurations[i - 1];
             }
 
+            // Setting up change in frames and total frames
             deltaFrames = 0;
             totalFrames = stageStartTimes[4] + stageDurations[4];
 
+            // Creating the beam itself
             beam.setSize(size);
             beam.setScale(beamScale.x,1);
             beam.setFillColor(Color::White);
@@ -70,6 +74,7 @@ class BlasterBeams {
         // Stops the animation
         void stopAnimation() {inAnimation = false;}
 
+        // Checks if the beam has finished and thus is fired
         bool checkFired() {return fired;}
 
         // This is responsible for all the logic when the beam is fired
@@ -81,6 +86,7 @@ class BlasterBeams {
 
             deltaFrames++;
 
+            // Checking which stage of animation it is in currently
             if (deltaFrames >= totalFrames) {
                 fired = true;
                 inAnimation = false;
@@ -97,6 +103,7 @@ class BlasterBeams {
                 stage = 0;
             }
 
+            // A time variable to control the easing based on the stage
             float t;
             t = (deltaFrames - stageStartTimes[stage]) / stageDurations[stage];
 
@@ -108,6 +115,7 @@ class BlasterBeams {
                 t = 1;
             }
 
+            // Value to control the easing
             float easedT;
             if (t < 0.5) {
                 easedT = t * t * t;
@@ -117,6 +125,7 @@ class BlasterBeams {
 
             float scale = startScale;
 
+            // Changing size using scaling, and transparency
             switch (stage) {
                 case 0:
                     scale = startScale + (firstGrowScale - startScale) * easedT;
@@ -138,14 +147,24 @@ class BlasterBeams {
             }
 
             beam.setScale(scale, 1);
+
+            // Mkaing sure transparency doesn't go into the negatives
             if (transparency < 0) {
                 transparency = 0;
             }
             
+            // Updating transparency
             beam.setFillColor(sf::Color(255, 255, 255, transparency));
         }
 
+        // Returns the global bounds
         FloatRect getGlobalBounds() {return beam.getGlobalBounds();}
+
+        // Returns the local bounds
+        FloatRect getLocalBounds() {return beam.getLocalBounds();}
+
+        // Returns the inverse transform
+        Transform getInverseTransform() {return beam.getInverseTransform();}
 
         // Draws the beam
         void draw(RenderWindow* window) {

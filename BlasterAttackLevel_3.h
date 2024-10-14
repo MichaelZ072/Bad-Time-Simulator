@@ -1,22 +1,20 @@
-#ifndef BLASTERATTACKLEVEL_1_H // Change headers when coping
-#define BLASTERATTACKLEVEL_1_H
+#ifndef BLASTERATTACKLEVEL_3_H // Change headers when coping
+#define BLASTERATTACKLEVEL_3_H
 
 #include <vector>
 #include "AttackLevels.h"
 #include "GasterBlasters.h"
 #include "BlasterData.h"
 
-class BlasterAttackLevel_1 : public AttackLevels { // Change class name and constructor and destructor when copying
+class BlasterAttackLevel_3 : public AttackLevels { // Change class name and constructor and destructor when copying
     private:
         vector<BlasterData> blasters;
         bool inAttack;
     public:
-        BlasterAttackLevel_1() {
+        BlasterAttackLevel_3() {
             // Creating the blasters
-            blasters.emplace_back(Vector2f(642, 481), Vector2f(2, 2), 0, Vector2f(452, 366), 5, 90, 1);
-            blasters.emplace_back(Vector2f(642, 481), Vector2f(2, 2), 0, Vector2f(377, 444), 5, 180, -1);
-            blasters.emplace_back(Vector2f(-3, -6), Vector2f(2, 2), 0, Vector2f(186, 241), 5, 270, -1);
-            blasters.emplace_back(Vector2f(-3, -6), Vector2f(2, 2), 0, Vector2f(257, 163), 5, 0, 1);
+            blasters.emplace_back(Vector2f(650, 245), Vector2f(3, 3), 0, Vector2f(500, 305), 5, 90, 1);
+            blasters.emplace_back(Vector2f(0, 245), Vector2f(3, 3), 0, Vector2f(140, 305), 5, 270, -1);
         }
 
         // Check if the attack is running
@@ -84,7 +82,7 @@ class BlasterAttackLevel_1 : public AttackLevels { // Change class name and cons
             }
         }
 
-        ~BlasterAttackLevel_1() {
+        ~BlasterAttackLevel_3() {
 
         }
 };

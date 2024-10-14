@@ -146,14 +146,14 @@ class Board {
         }
 
         // Get the center of the board
-        Vector2f getCenter() {
-            return board.getPosition();
-        }
+        Vector2f getCenter() {return board.getPosition();}
 
         // Get the size of the board
-        Vector2f getSize() {
-            return board.getSize();
-        }
+        Vector2f getSize() {return board.getSize();}
+
+        FloatRect getBounds() {return board.getGlobalBounds();}
+
+        float getThickness() {return thickness;}
 
         // Draw the board
         void draw(RenderWindow* window){
