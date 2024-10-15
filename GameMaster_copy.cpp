@@ -129,7 +129,7 @@ class GameMaster
         // Runs the game
         void run() {
             if (!soul->getAlive()) {
-                //level = -2;
+                level = -2;
             }
 
             Event event;
@@ -163,7 +163,7 @@ class GameMaster
                 checkMovement();
             }
             
-            if (level > 6) {
+            if (level > 5) {
                 sans->setHead("assets/sansFaceEyesClosed.png");
                 sans->talk("you have won...");
 
@@ -206,13 +206,13 @@ class GameMaster
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
                             break;
-                        case 6:
+                        /*case 6:
                             boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
-                            break;
+                            break;*/
                     }
 
                     if (board->getState() == 1) {

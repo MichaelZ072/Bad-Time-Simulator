@@ -143,7 +143,7 @@ class GameMaster
         // Runs the game
         void run() {
             if (!soul->getAlive()) {
-                //level = -2;
+                level = -2;
             }
 
             Event event;
@@ -159,18 +159,18 @@ class GameMaster
                 }
             }
             
-                if (intermission) {
-                    if (action->getIsAnimationEnd() == true) {
-                    } else {
-                        action->moveAttackBar(action->getIsAnimation(), 20);
-                        action->animationCheck();
-                    }
-
-                    if(isFinalPhase == true) {
-                        finalIntermission();
-                        isFinalPhase = false;
-                    }
+            if (intermission) {
+                if (action->getIsAnimationEnd() == true) {
+                } else {
+                    action->moveAttackBar(action->getIsAnimation(), 20);
+                    action->animationCheck();
                 }
+
+                if(isFinalPhase == true) {
+                    finalIntermission();
+                    isFinalPhase = false;
+                }
+            }
 
             action->updateHealth(action->getCurrentHealth());
 
@@ -178,7 +178,7 @@ class GameMaster
                 checkMovement();
             }
             
-            if (level > 6) {
+            if (level > 5) {
                 sans->setHead("assets/sansFaceEyesClosed.png");
                 sans->talk("you have won...");
 
@@ -196,7 +196,6 @@ class GameMaster
                 cout << "New stats saved!" << endl;
             } else if (level > 0) {
                 if (intermission) {
-
                     switch (level) {
                         case 1:
                             for (int i = 1; i < 5; i++) {
@@ -225,13 +224,13 @@ class GameMaster
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
                             break;
-                        case 6:
+                        /*case 6:
                             boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
-                            break;
+                            break;*/
                     }
 
                     if (board->getState() == 1) {

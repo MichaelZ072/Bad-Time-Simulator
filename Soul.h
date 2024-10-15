@@ -359,7 +359,7 @@ class Soul {
             } else {
                 isAlive = false;
             }
-
+            cout << health << endl;
             karma = addKarma;
         } 
 
