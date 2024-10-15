@@ -14,8 +14,6 @@
 
 #include "Cover.h"
 
-
-
 using namespace sf;
 using namespace std;
 

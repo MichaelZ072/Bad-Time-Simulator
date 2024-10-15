@@ -135,13 +135,8 @@ class BoneWall : public Bones {
                         
                         // reset changed attributes after attack has ended (used = true meaning it will be deleted)
                         } else {
-                            indicatorTimerStarted = false;
-                            attackTimerStarted = false;
-                            heightTracker = 0;
-                            reverseMovement = false;
                             isActive = false;
                             indicatorSet = false;
-                            indicator.setPosition(320,307);
                             used = true;
                         }
                     }
