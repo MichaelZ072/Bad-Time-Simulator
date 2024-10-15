@@ -31,7 +31,7 @@ class GameMaster
             fired = false;
             win = new RenderWindow(VideoMode(winSizeX, winSizeY), title);
             board = new Board(sizeX, sizeY, 5);
-            soul = new Soul(board, 92, 5, 20);
+            soul = new Soul(board, 92);
             blaster = new GasterBlasters(Vector2f(0, 245), Vector2f(3, 3), 0);
         }
 

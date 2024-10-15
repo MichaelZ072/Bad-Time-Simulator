@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 #include "BulletBoard.h"
 
 using namespace sf;
@@ -13,25 +14,37 @@ class Soul {
         Sprite soul;
         Texture redTexture;
         Texture blueTexture;
+        Vector2f position;
         bool isRed;
         int maxHealth;
         int health;
         int karma;
-        float speedRed;
-        float speedBlue;
-        int maxHeight;
-        Vector2f gravity;
-        Vector2f position;
+        float speed;
+        float velocityY;
+        float gravity;
+        float jumpVelocity;
+        bool onGround;
+        bool isJumping;
+        bool upPressed;
         bool isAlive;
+        int intermissionPositionCount;
     public:
-        Soul(Board* board, int setMaxHealth, float setSpeed, int setMaxHeight) {
+        Soul(Board* board, int setMaxHealth) {
+            // Setting soul parameters
             maxHealth = setMaxHealth;
             health = maxHealth;
             karma = 0;
-            speedRed = setSpeed;
-            maxHeight = setMaxHeight;
             isRed = true;
             isAlive = true;
+
+            // Setting movement parameters
+            speed = 5;
+            velocityY = 0;
+            gravity = 0.4;
+            jumpVelocity = -8;
+            onGround = false;
+            isJumping = false;
+            upPressed = false;
 
             // Getting the textures
             redTexture.loadFromFile("assets/red_soul.png");
@@ -43,6 +56,8 @@ class Soul {
             soul.setOrigin(Vector2f(8,8));
             soul.setPosition(position);
         }
+
+        bool isOnGround() {return onGround;}
 
         // Returns whether the soul is red or not
         bool soulColor() {return isRed;}
@@ -59,52 +74,94 @@ class Soul {
             isRed = false;
         }
 
-        // Moves the soul according to the up arrow
-        void moveUp(Board* board) {
-            if (isRed) {
-                soul.setPosition(Vector2f(position.x, position.y -= speedRed));
-            } else {
-
-            }
-
-            // Checks if the soul is within the board
-            boundaryCheck(board);
-        }
-
-        // Moves the soul according to the down arrow
-        void moveDown(Board* board){
-            if (isRed) {
-                soul.setPosition(Vector2f(position.x, position.y += speedRed));
-            } else {
-
-            }
-
-            // Checks if the soul is within the board
-            boundaryCheck(board);
+        void upPress(bool setUpPress) {
+            upPressed = setUpPress;
         }
 
         // Moves the soul according to the left arrow
         void moveLeft(Board* board){
-            if (isRed) {
-                soul.setPosition(Vector2f(position.x -= speedRed, position.y));
-            } else {
-
-            }
+            soul.setPosition(Vector2f(position.x -= speed, position.y));
 
             // Checks if the soul is within the board
             boundaryCheck(board);
         }
 
         // Moves the soul according to the right arrow
-        void moveRight(Board* board){
-            if (isRed) {
-                soul.setPosition(Vector2f(position.x += speedRed, position.y));
-            } else {
-
-            }
+        void moveRight(Board* board){    
+            soul.setPosition(Vector2f(position.x += speed, position.y));
 
             // Checks if the soul is within the board
             boundaryCheck(board);
+        }
+
+        // Moves the soul according to the up arrow
+        void moveUp(Board* board) {
+            if (isRed) { // Moves the soul according to the state
+                soul.setPosition(Vector2f(position.x, position.y -= speed));
+                // Checks if the soul is within the board
+                boundaryCheck(board);
+            } else {
+                if (onGround) {
+                    velocityY = jumpVelocity;
+                    onGround = false;
+                    isJumping = true;
+                }
+            }
+        }
+
+        // Moves the soul according to the down arrow
+        void moveDown(Board* board){
+            if (isRed) { // Moves the soul according to the state
+                soul.setPosition(Vector2f(position.x, position.y += speed));
+                // Checks if the soul is within the board
+                boundaryCheck(board);
+            }
+        }
+
+        void update(Board* board, vector<FloatRect> bounds) {
+            if (!isRed) {
+                if (!onGround) {
+                    // Apply gravity
+                    velocityY += gravity;
+                }
+
+                // Check if the player has released the up arrow during a jump
+                if (isJumping && !upPressed && velocityY < 0) {
+                    velocityY = -0.8;
+                    isJumping = false;
+                }
+
+                // Update position
+                position.y += velocityY;
+                soul.setPosition(position);
+
+                onGround = false;
+
+                FloatRect soulBounds = soul.getGlobalBounds();
+
+                // Iterate through platform bounds
+                for (const auto& bound : bounds) {
+                    // Only checking when soul is moving downwards
+                    if (velocityY > 0) {
+                        // Checks if soul is intersecting
+                        if (soulBounds.intersects(bound)) {
+                            float previousSoulBottom = soulBounds.top + soulBounds.height - velocityY;
+
+                             if (previousSoulBottom <= bound.top) {
+                                // Land on platform
+                                position.y = bound.top - soul.getOrigin().y;
+                                soul.setPosition(position);
+                                velocityY = 0;
+                                onGround = true;
+                                isJumping = false;
+                                break; // Stop checking other platforms
+                            }
+                        }
+                    }
+                }
+
+                boundaryCheck(board);
+            }
         }
 
         void boundaryCheck(Board* board) {
@@ -116,20 +173,138 @@ class Soul {
                 board->getBounds().height - board->getThickness() * 2);
 
             // Checks if the soul is on the boundary of the board, and then stops it
+            // Left boundary
             if (soulBounds.left < boardBounds.left) {
-                soul.setPosition(Vector2f(position.x = boardBounds.left + soul.getOrigin().x, position.y));
+                position.x = boardBounds.left + soul.getOrigin().x;
+                soul.setPosition(position);
             }
 
-            if (soulBounds.top < boardBounds.top) {
-                soul.setPosition(Vector2f(position.x, position.y = boardBounds.top + soul.getOrigin().y));
-            }
-
+            // Right boundary
             if (soulBounds.left + soulBounds.width > boardBounds.left + boardBounds.width) {
-                soul.setPosition(Vector2f(position.x = boardBounds.left + boardBounds.width - soul.getOrigin().x, position.y));
+                position.x = boardBounds.left + boardBounds.width - soul.getOrigin().x;
+                soul.setPosition(position);
             }
 
-            if (soulBounds.top + soulBounds.height > boardBounds.top + boardBounds.height) {
-                soul.setPosition(Vector2f(position.x, position.y = boardBounds.top + boardBounds.height - soul.getOrigin().y));
+            if (isRed) {
+                // Top boundary
+                if (soulBounds.top < boardBounds.top) {
+                    position.y = boardBounds.top + soul.getOrigin().y;
+                    soul.setPosition(position);
+                }
+
+                // Bottom boundary
+                if (soulBounds.top + soulBounds.height > boardBounds.top + boardBounds.height) {
+                    position.y = boardBounds.top + boardBounds.height - soul.getOrigin().y;
+                    soul.setPosition(position);
+                }
+            } else {
+                // Ground collision
+                if (soulBounds.top + soulBounds.height >= boardBounds.top + boardBounds.height) {
+                    position.y = boardBounds.top + boardBounds.height - soul.getOrigin().y;
+                    soul.setPosition(position);
+                    velocityY = 0;
+                    onGround = true;
+                    isJumping = false;
+                } else if (!onGround) {
+                    onGround = false;
+                }
+
+                // Ceiling collision
+                if (soulBounds.top <= boardBounds.top) {
+                    position.y = boardBounds.top + soul.getOrigin().y;
+                    soul.setPosition(position);
+                    velocityY = 0;
+                    isJumping = false;
+                }
+            }
+        }
+
+        // Moves the soul according to the left arrow intermission
+        void intermissionMoveLeft() {
+            intermissionPositionCount--;
+
+            if (getIntermissionPositionCount() < 0) {
+                intermissionPositionCount = 3;
+            }
+            switch (intermissionPositionCount) {
+                case 0:
+                    changePosition(Vector2f(47.5f, 450.0f));
+                    intermissionPositionCount = 0;
+                    break;
+                case 1:
+                    changePosition(Vector2f(197.5f, 450.0f));
+                    intermissionPositionCount = 1;
+                    break;
+                case 2:
+                    changePosition(Vector2f(357.5f, 450.0f));
+                    intermissionPositionCount = 2;
+                    break;
+                case 3:
+                    changePosition(Vector2f(507.5f, 450.0f));
+                    intermissionPositionCount = 3;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Moves the soul according to the right arrow intermission
+        void intermissionMoveRight() {
+            intermissionPositionCount++;
+
+            if (getIntermissionPositionCount() > 3) {
+                intermissionPositionCount = 0;
+            }
+
+            switch (intermissionPositionCount) {
+                case 0:
+                    changePosition(Vector2f(47.5f, 450.0f));
+                    intermissionPositionCount = 0;
+                    break;
+                case 1:
+                    changePosition(Vector2f(197.5f, 450.0f));
+                    intermissionPositionCount = 1;
+                    break;
+                case 2:
+                    changePosition(Vector2f(357.5f, 450.0f));
+                    intermissionPositionCount = 2;
+                    break;
+                case 3:
+                    changePosition(Vector2f(507.5f, 450.0f));
+                    intermissionPositionCount = 3;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        int getIntermissionPositionCount() {return intermissionPositionCount;}
+
+        void selectActionPosition() {
+            changePosition(Vector2f(70,285));
+        }
+
+        void returnActionPosition(int count) {
+            switch (count) {
+                case 0:
+                    changePosition(Vector2f(47.5f,450.0f));
+                    cout<<"change poition occured" << endl;
+                    break;
+                case 1:
+                    changePosition(Vector2f(197.5f, 450.0f));
+                    cout<<"change poition occured" << endl;
+                    break;
+                case 2:
+                    changePosition(Vector2f(357.5f, 450.0f));
+                    cout<<"change poition occured" << endl;
+                    break;
+                case 3:
+                    changePosition(Vector2f(507.5f, 450.0f));
+                    cout<<"change poition occured" << endl;
+                    break;
+            
+            default:
+                break;
             }
         }
 

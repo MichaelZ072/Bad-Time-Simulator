@@ -8,6 +8,7 @@ class AttackLevels {
     public:
         AttackLevels() = default;
         virtual ~AttackLevels() = default;
+        virtual void updateSpawn() {};
         virtual bool checkAttack() = 0;
         virtual void startAttack() = 0;
         virtual void attack(Soul* soul) = 0;

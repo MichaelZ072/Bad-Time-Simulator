@@ -46,6 +46,7 @@ class Board {
         // Change the bool to state the board is not in an animation
         void stopAnimation() {inAnimation = false;}
 
+        // Gets the state of the board: 0 = red, 1 = blue, 2 = blueTall, 3 = intermission
         int getState() {return boardState;}
 
         // Changes the board to a new size and position through an animation

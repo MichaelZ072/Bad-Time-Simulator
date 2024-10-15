@@ -17,6 +17,7 @@ class GameMaster
         int winSizeY;
         Board* board;
         Soul* soul;
+        vector<FloatRect> bounds;
         Clock clock;
         Time time;
         int deltaFrames;
@@ -27,7 +28,9 @@ class GameMaster
             deltaFrames = 0;
             win = new RenderWindow(VideoMode(winSizeX, winSizeY), title);
             board = new Board(sizeX, sizeY, 5);
-            soul = new Soul(board, 92, 5, 20);
+            soul = new Soul(board, 92);
+
+            bounds.push_back(FloatRect(0,0,0,0));
         }
 
         // This is used to set the framerate of the game, keeping everything consistent
@@ -51,18 +54,55 @@ class GameMaster
                 }
             }
 
-            if (deltaFrames < 5) {
-                soul->moveUp(board);
-            } else if (soul->getPosition().y != board->getCenter().y - 25) {
-                cout << "Test was unsucessful" << endl;
+            //if (deltaFrames < 5) {
+            //    soul->moveUp(board);
+            //} else if (soul->getPosition().y != board->getCenter().y - 25) {
+            //    cout << "Test was unsucessful" << endl;
+            //}
+
+            if (Keyboard::isKeyPressed(Keyboard::Enter)) {
+                soul->makeBlue();
+                board->startAnimation();
             }
 
-            deltaFrames++;
+            if (board->checkAnimation()) {
+                board->changeBlue1(winSizeX, winSizeY);
+            }
+
+            checkMovement();
+
+            //cout << soul->isOnGround() << endl;
+
+            //deltaFrames++;
 
             win->clear();
             board->draw(win);
             soul->draw(win);
             win->display();
+        }
+
+        // This checks and updates the player based on keypresses
+        void checkMovement() {
+            soul->upPress(Keyboard::isKeyPressed(Keyboard::Up));
+            
+            // Controls player movement using the arrow keys
+            if (Keyboard::isKeyPressed(Keyboard::Left)) {
+                soul->moveLeft(board);
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Right)) {
+                soul->moveRight(board);
+            }
+            
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                soul->moveUp(board);
+            }
+
+            if (Keyboard::isKeyPressed(Keyboard::Down)) {
+                soul->moveDown(board);
+            }
+
+            soul->update(board, bounds);
         }
 
         ~GameMaster() {}
