@@ -40,8 +40,6 @@
 #include "BoneAttackLevel_6.h"
 #include "BoneAttackLevel_7.h"
 
-#include "SaveFile.h"
-
 using namespace sf;
 using namespace std;
 
@@ -70,9 +68,6 @@ class GameMaster
         actionSelect* inspect;
         actionSelect* spare;
         actionSelect* choose;
-        SaveFile* save;
-        int mostAttacksWon;
-        int totalHealthLost;
     public:
         GameMaster(int sizeX, int sizeY, string title) {
             winSizeX = sizeX;
@@ -90,15 +85,6 @@ class GameMaster
             attack = new fight(10);
             spare = new mercy(10);
             inspect = new act(10);
-
-            save = new SaveFile("gameStats.txt");
-            mostAttacksWon = 0;
-            totalHealthLost = 0;
-
-            save->readStats(mostAttacksWon, totalHealthLost);
-            cout << "Current stats: " << endl;
-            cout << "Most Attacks Won: " << mostAttacksWon << endl;
-            cout << "Total Health Lost: " << totalHealthLost << endl;
 
             blasterAttacks.push_back(make_unique<BlasterAttackLevel_1>());
             blasterAttacks.push_back(make_unique<BlasterAttackLevel_2>());
@@ -157,8 +143,7 @@ class GameMaster
                 if (intermission) {
                     checkInput();
                 }
-            }
-            
+                }
                 if (intermission) {
                     if (action->getIsAnimationEnd() == true) {
                     } else {
@@ -190,10 +175,6 @@ class GameMaster
                 if (board->checkAnimation()) {
                     board->changeRed(winSizeX, winSizeY);
                 }
-
-                save->writeStats(mostAttacksWon, totalHealthLost);
-
-                cout << "New stats saved!" << endl;
             } else if (level > 0) {
                 if (intermission) {
 
@@ -241,6 +222,12 @@ class GameMaster
 
                     if (board->checkAnimation()) {
                         board->changeIntermission2(winSizeX, winSizeY);
+                    }
+
+                    if (Keyboard::isKeyPressed(Keyboard::Enter)) {
+                        deltaFrames = 0;
+                        level++;
+                        intermission = false;
                     }
                 } else {
                     if (board->getState() == 3) {
@@ -401,6 +388,12 @@ class GameMaster
                     if (board->checkAnimation()) {
                         board->changeIntermission1(winSizeX, winSizeY);
                     }
+
+                    if (Keyboard::isKeyPressed(Keyboard::Enter)) {
+                        deltaFrames = 0;
+                        level++;
+                        intermission = false;
+                    }
                 } else {
                     switch (level) {
                         case 0:
@@ -453,15 +446,7 @@ class GameMaster
             } else {
                 sans->setHead("assets/sansFaceEyesClosed.png");
                 sans->talk("you have died...");
-
-                save->writeStats(mostAttacksWon, totalHealthLost);
-
-                cout << "New stats saved!" << endl;
             }
-
-            // Logic for saving
-            mostAttacksWon += level;
-            totalHealthLost += soul->totalDamageTaken();
 
             if (board->checkAnimation()) {
                 cover->updateCover(board);

@@ -31,7 +31,7 @@ class BoneAttackLevel_1 : public AttackLevels {
             inAttack = true;
             
             // if boneWall is already active, do not spawn the bone again
-            for (int i = 0; i < boneWalls.size(); i++) {
+            for (int i = 0; i < int(boneWalls.size()); i++) {
                 if (!boneWalls[i].getIsActive()) {
                     // spawn a bone wall starting from the bottom and going up
                     boneWalls[i].spawn(Vector2f(boardCopy->getCenter().x, boardCopy->getCenter().y + boardCopy->getSize().y / 2.0f + boneWalls[i].getSize().x / 2.0f), 90, 0);
@@ -43,7 +43,7 @@ class BoneAttackLevel_1 : public AttackLevels {
         void stopAttack() {
             inAttack = false;
             // disable pointer objects assosciated with this attack
-        }
+        } 
 
         // This contains all the code for the attack
         void attack(Soul* soul) {   

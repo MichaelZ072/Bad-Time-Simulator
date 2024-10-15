@@ -17,7 +17,6 @@ class GameMaster
         int winSizeY;
         Board* board;
         Soul* soul;
-        vector<FloatRect> bounds;
         Clock clock;
         Time time;
         int deltaFrames;
@@ -29,8 +28,6 @@ class GameMaster
             win = new RenderWindow(VideoMode(winSizeX, winSizeY), title);
             board = new Board(sizeX, sizeY, 5);
             soul = new Soul(board, 92);
-
-            bounds.push_back(FloatRect(0,0,0,0));
         }
 
         // This is used to set the framerate of the game, keeping everything consistent
@@ -102,7 +99,7 @@ class GameMaster
                 soul->moveDown(board);
             }
 
-            soul->update(board, bounds);
+            soul->update(board);
         }
 
         ~GameMaster() {}

@@ -24,7 +24,6 @@ class BoneAttackLevel_3 : public AttackLevels {
         bool readyToSpawn = false;
 
     public:
-
         BoneAttackLevel_3(Board* board) {
             boardCopy = board;
 
@@ -35,16 +34,14 @@ class BoneAttackLevel_3 : public AttackLevels {
             inAttack = false;
         }
 
-        void updateSpawn() {
+        // Starts the attack
+        void startAttack() {
+            inAttack = true;
+
             // wait for current elapsed time to surpass time of spawnDelay
             if (!readyToSpawn && spawnClock.getElapsedTime().asSeconds() >= spawnDelay) {
                 readyToSpawn = true; // Allow the next bone to spawn after time of spawnDelay has been surpassed
             }
-        }
-
-        // Starts the attack
-        void startAttack() {
-            inAttack = true;
                         
             // if bones already active, do not spawn the bone again
             for (int i = 0; i < int(bones.size()); i ++) {

@@ -28,6 +28,9 @@ class Soul {
         bool upPressed;
         bool isAlive;
         int intermissionPositionCount;
+        float throwVelocity;
+        bool isThrown;
+        int totalDamage;
     public:
         Soul(Board* board, int setMaxHealth) {
             // Setting soul parameters
@@ -36,6 +39,7 @@ class Soul {
             karma = 0;
             isRed = true;
             isAlive = true;
+            totalDamage = 0;
 
             // Setting movement parameters
             speed = 5;
@@ -45,6 +49,8 @@ class Soul {
             onGround = false;
             isJumping = false;
             upPressed = false;
+            throwVelocity = 16;
+            isThrown = false;
 
             // Getting the textures
             redTexture.loadFromFile("assets/red_soul.png");
@@ -118,7 +124,12 @@ class Soul {
             }
         }
 
-        void update(Board* board, vector<FloatRect> bounds) {
+        void throwToBottom() {
+            velocityY = throwVelocity; 
+            isThrown = true;
+        }
+
+        void update(Board* board) { // , vector<FloatRect> bounds
             if (!isRed) {
                 if (!onGround) {
                     // Apply gravity
@@ -137,10 +148,10 @@ class Soul {
 
                 onGround = false;
 
-                FloatRect soulBounds = soul.getGlobalBounds();
+                // FloatRect soulBounds = soul.getGlobalBounds();
 
                 // Iterate through platform bounds
-                for (const auto& bound : bounds) {
+                /*for (const auto& bound : bounds) {
                     // Only checking when soul is moving downwards
                     if (velocityY > 0) {
                         // Checks if soul is intersecting
@@ -158,7 +169,7 @@ class Soul {
                             }
                         }
                     }
-                }
+                }*/
 
                 boundaryCheck(board);
             }
@@ -205,6 +216,7 @@ class Soul {
                     velocityY = 0;
                     onGround = true;
                     isJumping = false;
+                    isThrown = false;
                 } else if (!onGround) {
                     onGround = false;
                 }
@@ -280,8 +292,8 @@ class Soul {
 
         int getIntermissionPositionCount() {return intermissionPositionCount;}
 
-        void selectActionPosition() {
-            changePosition(Vector2f(70,285));
+        void selectActionPosition(){
+            changePosition(Vector2f(60,285));
         }
 
         void returnActionPosition(int count) {
@@ -321,27 +333,40 @@ class Soul {
         void heal(int addHealth) {
             health += addHealth;
 
-            if (health + karma > maxHealth) {
-                health = maxHealth - karma;
+            if(health>=92){
+                health = 92;
             }
+
+            //if (health + karma > maxHealth) {
+            //    health = maxHealth - karma;
+            //}
         }
 
         // Deals with changing values to do with damage
         void doDamage(int damage, int addKarma) {
-            if (health > 1) {
+            /*if (health > 1) {
                 health -= damage;
                 karma += addKarma;
             } else if (health == 1 && karma == 0) {
                 isAlive = false;
             } else if (health == 1) {
                 karma -= damage;
+            }*/
+
+            if (health > 0) {
+                health -= damage * 2;
+                totalDamage += damage * 2;
+            } else {
+                isAlive = false;
             }
+
+            karma = addKarma;
         } 
 
-        // Used to update the health shown in the ui
-        void updateHealth() {
+        int totalDamageTaken() {return totalDamage;}
 
-        }
+        // Returns if the soul is alive or dead
+        bool getAlive() {return isAlive;}
 
         // Teleports the soul to the specified location
         void changePosition(Vector2f newPosition) {

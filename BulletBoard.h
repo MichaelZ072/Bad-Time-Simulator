@@ -129,8 +129,8 @@ class Board {
         }
 
         // Change to red board
-        void changeRed() {
-
+        void changeRed(int winSizeX, int winSizeY) {
+            changeSize(Vector2f(160, 160),Vector2f(winSizeX / 2, winSizeY * 64 / 100), 7, 2);
             boardState = 0;
         }
 
@@ -155,6 +155,7 @@ class Board {
         // Change to intermission size from blue board
         void changeIntermission2(int winSizeX, int winSizeY) {
             changeSize(Vector2f(570, 130),Vector2f(winSizeX / 2, winSizeY * 64 / 100 + 30), 7, 2);
+            boardState = 3;
         }
 
         // Get the center of the board

@@ -32,7 +32,7 @@ class GameMaster
             win = new RenderWindow(VideoMode(winSizeX, winSizeY), title);
             board = new Board(sizeX, sizeY, 5);
             soul = new Soul(board, 92);
-            blaster = new GasterBlasters(Vector2f(0, 245), Vector2f(3, 3), 0);
+            blaster = new GasterBlasters(Vector2f(-10, 0), Vector2f(3, 3), 0); // (0, 245), (3, 3), 0
         }
 
         // This is used to set the framerate of the game, keeping everything consistent
@@ -62,18 +62,19 @@ class GameMaster
                 }
 
                 if (blaster->checkAnimation() && !blaster->checkFlownIn()) {
-                    blaster->flyIn(Vector2f(140, 305), 5, 270, -1);
+                    blaster->flyIn(Vector2f(320, 120), 5, 0, 1); // (140, 305), 5, 270, -1
                 } else if (blaster->checkAnimation() && deltaFrames > 100) {
                     blaster->flyOut(45, 16);
                 }
             } else {
-                delete blaster;
-                blaster = nullptr;
+                //delete blaster;
+                //blaster = nullptr;
             }
 
             deltaFrames++;
 
             win->clear();
+            board->draw(win);
             if ((blaster != nullptr)) {
                 blaster->draw(win);
             }

@@ -45,7 +45,7 @@ class Bones : public AttackInterface {
         }
 
         void setPosToDestroy(int pos) {posToDestroy = pos;}
-        int getPosToDestroy(int pos) {return posToDestroy;}
+        int getPosToDestroy() {return posToDestroy;}
 
         // basic check collision definition for bone class
         // virtual as some bones have a property which makes them blue, whereby the checkCollision function would need to be different

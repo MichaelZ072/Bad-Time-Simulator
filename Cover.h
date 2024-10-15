@@ -25,7 +25,7 @@ class Cover {
 
         Vector2f windowSize;
         
-
+        Color shadeColour;
     public:
         Cover(Board* board, int winSizeX, int winSizeY) {        
             unshadedSize = board->getSize();
@@ -34,7 +34,7 @@ class Cover {
             windowSize.x = winSizeX;
             windowSize.y = winSizeY;
 
-            Color shadeColour = Color::Blue;
+            shadeColour = Color::Black;
             
             // upper shade
             upperShadeSize.x = windowSize.x;
@@ -78,8 +78,6 @@ class Cover {
             if (board->getSize() != unshadedSize || board->getCenter() != center) {
                 unshadedSize = board->getSize();
                 center = board->getCenter();
-
-                Color shadeColour = Color::Blue;
                 
                 // upper shade
                 upperShadeSize.x = windowSize.x;
