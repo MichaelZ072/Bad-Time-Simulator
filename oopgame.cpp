@@ -125,6 +125,9 @@ class GameMaster
                 }
             }
 
+            if (Keyboard::isKeyPressed(Keyboard::P)) {
+                sans->talk("...");
+            }
             
             // player movement
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
@@ -185,6 +188,7 @@ class GameMaster
             if (!sans->getIsIdle()) { // check if sans is called to move
                 Vector2u winSize = win->getSize();
                 sans->dodge((winSize.x/2.0f - winSize.x/6.4), winSize.x/2.0f); // perform his dodge sequence
+                sans->mute();
             }
 
             
