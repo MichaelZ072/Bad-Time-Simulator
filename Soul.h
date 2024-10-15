@@ -190,7 +190,7 @@ class Soul {
   int getIntermissionPositionCount() { return intermissionPositionCount; }
 
   void selectActionPosition(){
-    changePosition(Vector2f(60.0f,285.0f));
+    changePosition(Vector2f(70.0f,285.0f));
   }
 
   void returnActionPosition(int count){

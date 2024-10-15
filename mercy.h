@@ -2,21 +2,17 @@
 #define MERCY_H
 #include <SFML/Graphics.hpp>
 
-#include "actionSelect.h"
 #include "actionInterface.h"
+#include "actionSelect.h"
 
 using namespace sf;
 using namespace std;
 
-class mercy : public actionSelect{
+class mercy : public actionSelect {
+ public:
+  mercy(int count) {};
+  virtual ~mercy() {};
 
-public:
-mercy(int count){};
-virtual ~mercy(){};
-
-void doAction(){
-    cout<< "action exectuted mercy"<<endl;
-}
-
+  void doAction() { cout << "action exectuted mercy" << endl; }
 };
 #endif

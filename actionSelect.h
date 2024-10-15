@@ -6,21 +6,14 @@
 #include "BulletBoard.h"
 #include "Soul.h"
 
-
 using namespace std;
 using namespace sf;
 
-
 class actionSelect {
-
-protected:
-
-
-public:
-    virtual void doAction(){};
-    virtual ~actionSelect(){};
-
-
+ protected:
+ public:
+  virtual void doAction() {};
+  virtual ~actionSelect() {};
 };
 
 #endif

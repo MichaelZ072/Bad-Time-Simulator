@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "actionSelect.h"
-#include "actionInterface.h"
 
 using namespace sf;
 using namespace std;
@@ -13,9 +12,6 @@ class act : public actionSelect {
   act(int count) {};
   virtual ~act() {};
 
-  void doAction(){ 
-    
-   }
-
+  void doAction() { cout << "action exectuted act" << endl; }
 };
 #endif
