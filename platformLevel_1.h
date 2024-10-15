@@ -50,6 +50,19 @@ for (auto& plat : platforms) {
     }
   }
   
+std::vector<sf::FloatRect> getAllPlatformBounds() override {
+    std::vector<sf::FloatRect> bounds;
+
+    bounds.push_back(platformSmallBlack_1.getGlobalBounds());
+    bounds.push_back(platformSmallGreen_1.getGlobalBounds());
+
+    for (auto& plat : platforms) {
+      bounds.push_back(plat->getPlatformSmallBlack_1().getGlobalBounds());
+      bounds.push_back(plat->getPlatformSmallGreen_1().getGlobalBounds());
+    }
+
+    return bounds; 
+  }
 };
 
 #endif

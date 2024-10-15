@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "actionSelect.h"
+#include "actionInterface.h"
 
 using namespace sf;
 using namespace std;

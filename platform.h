@@ -11,7 +11,7 @@ using namespace sf;
 class platform {
  protected:
   RectangleShape platformSmallBlack_1;
-   RectangleShape platformSmallBlack_2;
+  RectangleShape platformSmallBlack_2;
   RectangleShape platformSmallGreen_2;
   RectangleShape platformSmallGreen_1;
   RectangleShape platformTinyBlack;
@@ -32,6 +32,23 @@ class platform {
     speed = platformSpeed;
     board = gameBoard;
   }
+
+virtual std::vector<sf::FloatRect> getAllPlatformBounds() {
+    std::vector<sf::FloatRect> bounds;
+
+    bounds.push_back(platformSmallBlack_1.getGlobalBounds());
+    bounds.push_back(platformSmallBlack_2.getGlobalBounds());
+    bounds.push_back(platformSmallGreen_1.getGlobalBounds());
+    bounds.push_back(platformSmallGreen_2.getGlobalBounds());
+    bounds.push_back(platformMediumBlack.getGlobalBounds());
+    bounds.push_back(platformMediumGreen.getGlobalBounds());
+    bounds.push_back(platformLargeBlack.getGlobalBounds());
+    bounds.push_back(platformLargeGreen.getGlobalBounds());
+
+    return bounds;
+  }
+
+
   void platformSmallCreation_1(float x, float y) {
     platformSmallBlack_1.setSize(sf::Vector2f(60.0, 3));
     platformSmallBlack_1.setFillColor(Color::Black);

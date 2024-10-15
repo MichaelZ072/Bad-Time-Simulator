@@ -71,7 +71,27 @@ for (auto& plat : platforms) {
       window.draw(platform->getPlatformLargeBlack());
     }
   }
-  
+
+std::vector<sf::FloatRect> getAllPlatformBounds() override {
+    std::vector<sf::FloatRect> bounds;
+
+    bounds.push_back(platformMediumBlack.getGlobalBounds());
+    bounds.push_back(platformMediumGreen.getGlobalBounds());
+    bounds.push_back(platformLargeBlack.getGlobalBounds());
+    bounds.push_back(platformLargeGreen.getGlobalBounds());
+
+
+    for (auto& plat : platforms) {
+      bounds.push_back(plat->getPlatformMediumBlack().getGlobalBounds());
+      bounds.push_back(plat->getPlatformMediumGreen().getGlobalBounds());
+      bounds.push_back(plat->getPlatformLargeBlack().getGlobalBounds());
+      bounds.push_back(plat->getPlatformLargeGreen().getGlobalBounds());
+    }
+
+    return bounds; 
+  }
+
+
 };
 
 #endif

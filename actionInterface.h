@@ -5,11 +5,11 @@
 
 #include "BulletBoard.h"
 #include "Soul.h"
+#include "act.h"
 #include "actionSelect.h"
 #include "fight.h"
-#include "act.h"
-#include "mercy.h"
 #include "item.h"
+#include "mercy.h"
 
 using namespace std;
 using namespace sf;
@@ -31,6 +31,7 @@ class actionInterface {
   Texture spareSelectTexture;
   Texture attackBarTexture;
   Texture actionCheckTexture;
+  Texture foodTexture;
 
   // Sprite creation
   Sprite actSprite;
@@ -42,7 +43,7 @@ class actionInterface {
   Sprite selectSprite;
   Sprite selectedSprite;
   Sprite attackBarSprite;
-  Sprite actionCheckSprite;
+  Sprite selectionSprite;
 
   RectangleShape attackBar;
 
@@ -61,18 +62,17 @@ class actionInterface {
   bool isAttacking;
   bool isAnimation;
   bool isAnimationEnd;
-
-
+  bool isSelected;
+  bool endIntermission;
 
  public:
-  actionInterface(int health, bool isAttackMode, Soul* souls){
+  actionInterface(int health, bool isAttackMode, Soul* souls) {
+    soul = souls;
     currentHealth = health;
     attack = new fight(10);
     inspect = new act(10);
     spare = new mercy(10);
-    choose = new item(10);
-    soul = souls;
-
+    choose = new item(10, soul);
 
     fightIdleTexture.loadFromFile("./sprites/fightSpriteIdle.png");
     fightSelectedTexture.loadFromFile("./sprites/fightSpriteSelected.png");
@@ -88,6 +88,7 @@ class actionInterface {
     spareSelectTexture.loadFromFile("./sprites/spareSelect.png");
     attackBarTexture.loadFromFile("./sprites/attackBarSprite.png");
     actionCheckTexture.loadFromFile("./sprites/actionCheckSprite.png");
+    foodTexture.loadFromFile("./sprites/foodSprite.png");
 
     fightSprite.setPosition(30, 430);
     fightSprite.scale(0.85f, 0.775);
@@ -100,9 +101,9 @@ class actionInterface {
     levelSprite.setPosition(25, 395);
     textSprite.setPosition(65, 265);
     selectSprite.setPosition(1000, 1000);
-    attackBarSprite.setPosition(1000,1000);
-    attackBarSprite.scale(0.43f,0.43);
-    actionCheckSprite.setPosition(1000,1000);
+    attackBarSprite.setPosition(1000, 1000);
+    attackBarSprite.scale(0.43f, 0.43);
+    selectionSprite.setPosition(1000, 1000);
 
     if (isAttackMode == true) {
       // fight sprite idle
@@ -142,15 +143,15 @@ class actionInterface {
 
   void textBadTimeSwitch() { textSprite.setTexture(badTimeTexture); }
 
-  void textFightActSwitch() { 
-    selectSprite.setTexture(sansSelectTexture);
-    }
+  void textFightActSwitch() { selectSprite.setTexture(sansSelectTexture); }
 
-  void attackBarLoad(){attackBarSprite.setTexture(attackBarTexture);}
+  void attackBarLoad() { attackBarSprite.setTexture(attackBarTexture); }
 
-  void actionCheckLoad(){actionCheckSprite.setTexture(actionCheckTexture);}
+  void actionCheckLoad() { selectionSprite.setTexture(actionCheckTexture); }
 
-  void textSpareSwitch(){ selectSprite.setTexture(spareSelectTexture);   }
+  void foodLoad() { selectSprite.setTexture(foodTexture); }
+
+  void textSpareSwitch() { selectSprite.setTexture(spareSelectTexture); }
 
   void updateSpriteTextures(int count) {
     switch (count) {
@@ -196,166 +197,154 @@ class actionInterface {
     }
   }
 
-  void fightActSelect(){
-        textFightActSwitch();
-  };
+  void fightActSelect() { textFightActSwitch(); };
 
-  void spareSelect(){
-      textSpareSwitch();
-  };
+  void spareSelect() { textSpareSwitch(); };
 
-void moveSelectSprite(int x, int y){
-    selectSprite.setPosition(x, y);
-  }
+  void foodSelect() { foodLoad(); };
 
-  void returnState(){
-    if(getIsSelect() == true && getIsAction() == false){
+  void moveSelectSprite(int x, int y) { selectSprite.setPosition(x, y); }
+
+  void returnState() {
+    if (getIsSelect() == true && getIsAction() == false) {
       soul->returnActionPosition(soul->getIntermissionPositionCount());
-      selectSprite.setPosition(1000, 1000); 
+      selectSprite.setPosition(1000, 1000);
 
-        isSelection = false; 
+      isSelection = false;
     }
   }
 
-void battleSelection(int count){
-switch (count){
+  void battleSelection(int count) {
+    switch (count) {
+      case 0:
+        fightActSelect();
+        soul->selectActionPosition();
+        moveSelectSprite(75, 265);
+        isSelection = true;
+        isChoose = false;
+        selected = 0;
+        break;
 
-case 0:
-fightActSelect();
-soul->selectActionPosition();
-moveSelectSprite(75,265);
-isSelection = true;
-isChoose = false;
-selected = 0;
-  break;
+      case 1:
+        fightActSelect();
+        soul->selectActionPosition();
+        moveSelectSprite(75, 265);
+        isSelection = true;
+        isChoose = false;
+        selected = 1;
+        break;
 
-case 1:
-fightActSelect();
-soul->selectActionPosition();
-moveSelectSprite(75,265);
-isSelection = true;
-isChoose = false;
-selected =1;
-break;
+      case 2:
+        foodSelect();
+        soul->selectActionPosition();
+        moveSelectSprite(75, 265);
+        isSelection = true;
+        isChoose = false;
+        selected = 2;
+        break;
 
-case 2:
-fightActSelect();
-soul->selectActionPosition();
-moveSelectSprite(75,265);
-isSelection = true;
-isChoose = false;
-selected=2;
-break;
+      case 3:
+        spareSelect();
+        soul->selectActionPosition();
+        moveSelectSprite(75, 265);
+        isSelection = true;
+        isChoose = false;
+        selected = 3;
+        break;
 
-case 3:
-spareSelect();
-soul->selectActionPosition();
-moveSelectSprite(75,265);
-isSelection = true;
-isChoose = false;
-selected =3;
-break;
-
-default:
-  break;
-}
-}
-
-void moveAttackBarSprite(){
-    attackBarSprite.setPosition(37.5,250);
+      default:
+        break;
+    }
   }
 
-  void moveActionCheckSprite(){
-    actionCheckSprite.setPosition(65,260);
+  void moveAttackBarSprite() { attackBarSprite.setPosition(37.5, 250); }
 
+  void moveSelectionSprite() { selectionSprite.setPosition(65, 260); }
+
+  void actionSelection(int selected) {
+    switch (selected) {
+      case 0:
+        attackBarLoad();
+        moveSelectSprite(1000, 1000);
+        soul->changePosition(Vector2f(1000.0f, 1000.0f));
+        fightSwitchIdle();
+        moveAttackBarSprite();
+        isAction = true;
+        isAttacking = true;
+        isSelected = true;
+        break;
+
+      case 1:
+        inspect->doAction();
+        actionCheckLoad();
+        moveSelectSprite(1000, 1000);
+        soul->changePosition(Vector2f(1000.0f, 1000.0f));
+        actSwitchIdle();
+        moveSelectionSprite();
+        isAction = true;
+        isAttacking = true;
+        isSelected = true;
+        endIntermission =true;
+        break;
+
+      case 2:
+        choose->doAction();
+        itemSwitchIdle();
+
+        // end intermission
+        isAction = true;
+        isAttacking = true;
+        isSelected = true;
+        break;
+
+      case 3:
+        spare->doAction();
+        mercySwitchIdle();
+        isAction = true;
+        isAttacking = true;
+        isSelected = true;
+        endIntermission = true;
+        break;
+    }
   }
 
-void actionSelection(int selected){
-switch(selected){
-
-case 0:
-attackBarLoad();
-moveSelectSprite(1000,1000);
-soul->changePosition(Vector2f(1000.0f, 1000.0f));
-fightSwitchIdle();
-moveAttackBarSprite();
-isAction = true;
-isAttacking = true;
-break;
-
-
-case 1:
-inspect->doAction();
-actionCheckLoad();
-moveSelectSprite(1000,1000);
-soul->changePosition(Vector2f(1000.0f, 1000.0f));
-actSwitchIdle();
-moveActionCheckSprite();
-isAction = true;
-isAttacking = true;
-break;
-
-case 2:
-choose->doAction();// choose item 
-itemSwitchIdle();
-//sprites
-// need soul again
-// end intermission
-isAction = true;
-isAttacking = true;
-break;
-
-case 3:
-spare->doAction();
-mercySwitchIdle();
-// end intermisson
-isAction = true;
-isAttacking = true;
-break;
-}
-}
-
-void attackBarCreation(){
-  attackBar.setSize(sf::Vector2f(3, 130));
+  void attackBarCreation() {
+    attackBar.setSize(sf::Vector2f(3, 130));
     attackBar.setFillColor(Color::White);
     attackBar.setOutlineThickness(2.0f);
     attackBar.setOutlineColor(sf::Color::Black);
-    attackBar.setPosition(30,260);
-}
+    attackBar.setPosition(30, 260);
+  }
 
-void moveAttackBar(bool isAnimation){
-  if(isAnimation == true ){
-  attackBar.move(20,0);}
-  else{}
-}
+  void moveAttackBar(bool isAnimation, int x) {
+    if (isAnimation == true) {
+      attackBar.move(x, 0);
+    } else {
+    }
+  }
 
-void animationCheck(){ 
-  if(attackBar.getPosition().x>=570){
-    isAnimation = false;
-  }else{
+  void animationCheck() {
+    if (attackBar.getPosition().x >= 570 || getIsAnimationEnd() == true) {
+      isAnimation = false;
+    } else {
+      isAnimation = true;
+    }
+  }
+
+  void attackSelected() {
+    attackBarCreation();
     isAnimation = true;
-  } 
-}
+  }
 
+  void isAttacked() {
+    moveAttackBar(false, 0);
+    attack->doAction();
+    isAnimation = false;
+    isAnimationEnd = true;
+    endIntermission = true;
+  }
 
-void attackSelected(){
-attackBarCreation();
-isAnimation = true;
-}
-
-
-void isAttacked(){
-moveAttackBar(false);
-attack->doAction();
-isAnimation = false;
-isAnimationEnd = true;
-}
-
-
-
-void intermissionEnd(){
-isAttackMode = true;
-}
+  void intermissionEnd() { isAttackMode = true; }
 
   // Getter to access the sprite
   sf::Sprite& getAct() { return actSprite; }
@@ -364,33 +353,24 @@ isAttackMode = true;
   sf::Sprite& getMercy() { return mercySprite; }
   sf::Sprite& getLevelSprite() { return levelSprite; }
   sf::Sprite& getTextSprite() { return textSprite; }
-  sf::Sprite& getSansSelect() {return selectSprite;}
-  sf::Sprite& getAttackBarSprite() {return attackBarSprite;}
-  sf::Sprite& getActionCheckSprite() {return actionCheckSprite;}
-  sf::RectangleShape& getAttackBar(){return attackBar;}  
+  sf::Sprite& getSansSelect() { return selectSprite; }
+  sf::Sprite& getAttackBarSprite() { return attackBarSprite; }
+  sf::Sprite& getSelectionSprite() { return selectionSprite; }
+  sf::RectangleShape& getAttackBar() { return attackBar; }
 
-  bool getIsSelect(){
-    return isSelection;
-  }
-  bool getIsChoose(){
-    return isChoose;
-  }
+  bool getIsSelect() { return isSelection; }
+  bool getIsChoose() { return isChoose; }
 
-  int getSelectedNumber(){
-    return selected;
-  }
+  int getSelectedNumber() { return selected; }
 
-  bool getIsAction(){
-    return isAction;
-  }
+  bool getIsAction() { return isAction; }
 
-  bool getIsAnimation(){
-    return isAnimation;
-  }
+  bool getIsAnimation() { return isAnimation; }
 
-  bool getIsAnimationEnd(){
-    return isAnimationEnd;
-  }
+  bool getIsAnimationEnd() { return isAnimationEnd; }
 
+  bool getIsSelected() { return isSelected; }
+
+  bool getEndIntermission(){return endIntermission;}
 };
 #endif
