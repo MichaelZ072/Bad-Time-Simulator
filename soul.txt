@@ -1,0 +1,109 @@
+
+
+  // Moves the soul according to the left arrow intermission
+  void intermissionMoveLeft() {
+      if (isRed) {
+        intermissionPositionCount--;
+        if (getIntermissionPositionCount() < 0) {
+          intermissionPositionCount = 3;
+        }
+        switch (intermissionPositionCount) {
+          case 0:
+            changePosition(Vector2f(47.5f, 450.0f));
+            intermissionPositionCount = 0;
+            break;
+
+          case 1:
+            changePosition(Vector2f(197.5f, 450.0f));
+            intermissionPositionCount = 1;
+            break;
+
+          case 2:
+            changePosition(Vector2f(357.5f, 450.0f));
+            intermissionPositionCount = 2;
+            break;
+
+          case 3:
+            changePosition(Vector2f(507.5f, 450.0f));
+            intermissionPositionCount = 3;
+            break;
+
+          default:
+            break;
+        }
+
+      } else {
+      }
+
+  }
+
+  // Moves the soul according to the right arrow intermission
+  void intermissionMoveRight() {
+    if (isRed) {
+      intermissionPositionCount++;
+      if (getIntermissionPositionCount() > 3) {
+        intermissionPositionCount = 0;
+      }
+      switch (intermissionPositionCount)
+
+      {
+        case 0:
+          changePosition(Vector2f(47.5f, 450.0f));
+          intermissionPositionCount = 0;
+          break;
+
+        case 1:
+          changePosition(Vector2f(197.5f, 450.0f));
+          intermissionPositionCount = 1;
+          break;
+
+        case 2:
+          changePosition(Vector2f(357.5f, 450.0f));
+          intermissionPositionCount = 2;
+          break;
+
+        case 3:
+          changePosition(Vector2f(507.5f, 450.0f));
+          intermissionPositionCount = 3;
+          break;
+
+        default:
+          break;
+      }
+
+    } else {
+    }
+  }
+
+  int getIntermissionPositionCount() { return intermissionPositionCount; }
+
+  void selectActionPosition(){
+    changePosition(Vector2f(70.0f,285.0f));
+  }
+
+  void returnActionPosition(int count){
+    switch (count)
+    {
+    case 0:
+    changePosition(Vector2f(47.5f,450.0f));
+    cout<<"change poition occured" << endl;
+      break;
+
+    case 1:
+    changePosition(Vector2f(197.5f, 450.0f));
+    cout<<"change poition occured" << endl;
+  break;
+  case 2:
+    changePosition(Vector2f(357.5f, 450.0f));
+    cout<<"change poition occured" << endl;
+  break;
+  case 3:
+    changePosition(Vector2f(507.5f, 450.0f));
+    cout<<"change poition occured" << endl;
+  break;
+    
+    default:
+      break;
+    }
+
+  }

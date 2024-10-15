@@ -12,7 +12,7 @@ using namespace std;
 class item : public actionSelect{
 private:
 Soul* soul;
-int health;
+int pie;
 
 public:
 item(int count, Soul* souls){
@@ -21,9 +21,10 @@ item(int count, Soul* souls){
 virtual ~item(){};
 
 void doAction(){
-    health = soul->getHealth() +100;
-    cout<< "action exectuted item"<<endl;
+    pie= 100;
+    soul->heal(pie);
 }
 
 };
+
 #endif

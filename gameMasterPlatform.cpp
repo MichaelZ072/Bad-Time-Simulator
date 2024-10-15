@@ -26,7 +26,7 @@ class GameMaster {
   platform* plat;
 
   platformLevel_1* plat_1;
-  platformLevel_3* plat_3;
+  platformLevel_2* plat_3;
   platformLevel_4* plat_4;
   platformLevel_5* plat_5;
 
@@ -38,7 +38,7 @@ class GameMaster {
     soul = new Soul(board, 92, 4, 20, 0, true);
     //plat_1 = new platformLevel_1(board, 2.0f);
     plat_3 = new platformLevel_3(board, 5.0f);
-    plat_4 = new platformLevel_4(board, 5.0f);
+    plat_4 = new platformLevel_3(board, 5.0f);
     plat_5 = new platformLevel_5(board, 5.0f);
   }
 

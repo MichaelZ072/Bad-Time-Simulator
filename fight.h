@@ -19,10 +19,9 @@ public:
     
     void doAction(){
         attackCount++;
-        cout << "fight executed: " << attackCount << endl;
     }
 
-    int getAttacknCount(){
+    int getAttackCount(){
         return attackCount;
     }
 };

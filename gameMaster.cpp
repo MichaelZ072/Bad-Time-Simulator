@@ -120,7 +120,7 @@ class GameMaster {
 
     win->clear();
 
-    // Draw the sprite from actionInterface
+  
     win->draw(action->getAct());
     win->draw(action->getFight());
     win->draw(action->getItem());

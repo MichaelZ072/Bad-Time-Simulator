@@ -1,5 +1,5 @@
-#ifndef PLATFORMLEVEL4_H
-#define PLATFORMLEVEL4_H
+#ifndef PLATFORMLEVEL3_H
+#define PLATFORMLEVEL3_H
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
@@ -7,15 +7,15 @@
 #include "BulletBoard.h"
 #include "platform.h"
 
-class platformLevel_4 : public platform {
+class platformLevel_3 : public platform {
  private:
-  std::vector<platformLevel_4*> platforms;
+  std::vector<platformLevel_3*> platforms;
   sf::Clock platformClock;
   float platformSpawnDelay;
   int platformCount;
 
  public:
-  platformLevel_4(Board* board, float speed) : platform(speed, board) {
+  platformLevel_3(Board* board, float speed) : platform(speed, board) {
     platformSmallCreation_1(
         0, board->getCenter().y + board->getCenter().y * 1 / 12);
     platformSpawnDelay = 1.0;

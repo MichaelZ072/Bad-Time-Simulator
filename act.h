@@ -12,6 +12,6 @@ class act : public actionSelect {
   act(int count) {};
   virtual ~act() {};
 
-  void doAction() { cout << "action exectuted act" << endl; }
+  void doAction() {  }
 };
 #endif

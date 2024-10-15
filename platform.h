@@ -33,7 +33,7 @@ class platform {
     board = gameBoard;
   }
 
-  virtual std::vector<sf::FloatRect> getAllPlatformBounds() {
+virtual std::vector<sf::FloatRect> getAllPlatformBounds() {
     std::vector<sf::FloatRect> bounds;
 
     bounds.push_back(platformSmallBlack_1.getGlobalBounds());
@@ -48,6 +48,7 @@ class platform {
     return bounds;
   }
 
+
   void platformSmallCreation_1(float x, float y) {
     platformSmallBlack_1.setSize(sf::Vector2f(60.0, 3));
     platformSmallBlack_1.setFillColor(Color::Black);
@@ -61,7 +62,7 @@ class platform {
     platformSmallGreen_1.setOutlineColor(sf::Color::Green);
     platformSmallGreen_1.setPosition(x, y - 6);
   }
-  void platformSmallCreation_2(float x, float y) {
+void platformSmallCreation_2(float x, float y) {
     platformSmallBlack_2.setSize(sf::Vector2f(60.0, 3));
     platformSmallBlack_2.setFillColor(Color::Black);
     platformSmallBlack_2.setOutlineThickness(2.0f);
@@ -74,6 +75,7 @@ class platform {
     platformSmallGreen_2.setOutlineColor(sf::Color::Green);
     platformSmallGreen_2.setPosition(x, y - 6);
   }
+
 
   void platformTinyCreation(float x, float y) {
     platformTinyBlack.setSize(sf::Vector2f(40.0, 3));
@@ -169,7 +171,7 @@ class platform {
 
   sf::RectangleShape& getPlatformSmallBlack_1() { return platformSmallBlack_1; }
   sf::RectangleShape& getPlatformSmallGreen_1() { return platformSmallGreen_1; }
-  sf::RectangleShape& getPlatformSmallBlack_2() { return platformSmallBlack_2; }
+ sf::RectangleShape& getPlatformSmallBlack_2() { return platformSmallBlack_2; }
   sf::RectangleShape& getPlatformSmallGreen_2() { return platformSmallGreen_2; }
   sf::RectangleShape& getPlatformTinyBlack() { return platformTinyBlack; }
   sf::RectangleShape& getPlatformTinyGreen() { return platformTinyGreen; }

@@ -6,11 +6,12 @@
 #include <cmath>
 
 using namespace sf;
+using namespace std;
 
 class Board {
     private:
         RectangleShape board;
-        Vector2f size; // Red Soul = (160,160), Blue Soul = (0,0), Intermission = (570,130)
+        Vector2f size; // Red Soul = (160,160), Blue Soul = (364, 130), Intermission = (570,130)
         Vector2f position; // Red Soul = (winSizeX / 2, winSizeY * 64 / 100), Blue Soul = (Same,+15), Intermission (Same,Same)
         float thickness;
         Vector2f newSize;
@@ -18,14 +19,14 @@ class Board {
         Vector2f velocitySize;
         Vector2f velocityPos;
         bool inAnimation;
+        int boardState; // 0 = red, 1 = blue, 2 = blueTall, 3 = intermission
     public:
         Board(int winSizeX, int winSizeY, float setThickness){
-            size.x = 160;
-            size.y = 160;
-            position.x = winSizeX / 2;
-            position.y = winSizeY * 64 / 100;
+            size = Vector2f(160,160);
+            position = Vector2f(winSizeX / 2, winSizeY * 64 / 100);
             thickness = setThickness;
             inAnimation = false;
+            boardState = 0;
 
             // Setting the parameters of the board based on what was passed
             board.setSize(size);
@@ -45,8 +46,11 @@ class Board {
         // Change the bool to state the board is not in an animation
         void stopAnimation() {inAnimation = false;}
 
+        // Gets the state of the board: 0 = red, 1 = blue, 2 = blueTall, 3 = intermission
+        int getState() {return boardState;}
+
         // Changes the board to a new size and position through an animation
-        void changeSize(Vector2f setNewSize, Vector2f setNewPos, int xSpeed, int ySpeed) {
+        void changeSize(Vector2f setNewSize, Vector2f setNewPos, float xSpeed, float ySpeed) {
             // Checks if the size passed is different to what current
             if (setNewSize.x != newSize.x || setNewSize.y != newSize.y) {
                 newSize = setNewSize;
@@ -119,30 +123,38 @@ class Board {
             // Checks if the current parameters match the new ones, and ends animation
             if (size == newSize && position == newPos) {
                 inAnimation = false;
-                Vector2f temp = board.getOrigin();
-                board.setOrigin(size.x / 2, size.y / 2);
-                board.move(board.getOrigin() - temp);
             }
+
+            board.setOrigin(size.x / 2, size.y / 2);
         }
 
         // Change to red board
         void changeRed() {
 
+            boardState = 0;
         }
 
-        // Change to blue board
-        void changeBlue() {
+        // Change to blue board from intermission
+        void changeBlue1(int winSizeX, int winSizeY) {
+            changeSize(Vector2f(364, 130),Vector2f(winSizeX / 2, winSizeY * 64 / 100 + 30), 7, 2);
+            boardState = 1;
+        }
 
+        // Change to tall blue board from intermission
+        void changeBlue2(int winSizeX, int winSizeY) {
+            changeSize(Vector2f(364, 162),Vector2f(winSizeX / 2, winSizeY * 64 / 100 + 30), 7, 2);
+            boardState = 2;
         }
 
         // Change to intermission size from red board
         void changeIntermission1(int winSizeX, int winSizeY) {
-            changeSize(Vector2f(570, 130),Vector2f(winSizeX / 2 - 205, winSizeY * 64 / 100 + 30), 14, 2);
-        }   
+            changeSize(Vector2f(570, 130),Vector2f(winSizeX / 2, winSizeY * 64 / 100 + 30), 14, 2);
+            boardState = 3;
+        }
 
         // Change to intermission size from blue board
-        void changeIntermission2() {
-
+        void changeIntermission2(int winSizeX, int winSizeY) {
+            changeSize(Vector2f(570, 130),Vector2f(winSizeX / 2, winSizeY * 64 / 100 + 30), 7, 2);
         }
 
         // Get the center of the board
@@ -158,10 +170,6 @@ class Board {
         // Draw the board
         void draw(RenderWindow* window){
             window->draw(board);
-        }
-        
-        ~Board(){
-            ;
         }
 };
 

@@ -13,6 +13,6 @@ class mercy : public actionSelect {
   mercy(int count) {};
   virtual ~mercy() {};
 
-  void doAction() { cout << "action exectuted mercy" << endl; }
+  void doAction() {  }
 };
 #endif
