@@ -11,8 +11,8 @@ class MediumBone : public Bones {
         
     public:
         // construct a medium bone using a set texture
-        MediumBone() : Bones(0, 0, "assets/verticalBoneMedium.png") { 
-            isWhite = true;
+        MediumBone(bool toggleWhite) : Bones(0, 0, "assets/verticalBoneMedium.png") { 
+            isWhite = toggleWhite;
             colourSet = false;
 
             // default the soulPosChecker to (0, 0) until it is actually being used
@@ -21,10 +21,10 @@ class MediumBone : public Bones {
         }
 
         // we will specify the speed of the attack and mode
-        void callAttack(int speed, bool toggleBlue, int finalPosition) {
+        void callAttack(int speed, int finalPosition) {
             // the colour of the sprite changes depending on the mode set
             if (!colourSet) {
-                if (toggleBlue) {
+                if (!isWhite) {
                     bone.setColor(Color::Cyan);
                     isWhite = false;
                 } else {

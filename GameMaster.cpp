@@ -9,7 +9,13 @@
 #include "AttackLevels.h"
 #include "BoneAttackLevel_1.h"
 #include "BoneAttackLevel_2.h"
+#include "BoneAttackLevel_3.h"
+#include "BoneAttackLevel_4.h"
+#include "BoneAttackLevel_5.h"
+#include "BoneAttackLevel_6.h"
+#include "BoneAttackLevel_7.h"
 
+#include "Platform.h"
 #include "Bones.h"
 #include "LongBone.h"
 #include "MediumBone.h"
@@ -33,8 +39,7 @@ class GameMaster
         Soul* soul;
         Sans* sans;
         Cover* shader;
-        // vector<unique_ptr<AttackLevels>> attacks;
-        BoneAttackLevel_2* attack;
+        BoneAttackLevel_7* attack;
         
         Clock clock;
         Time time;
@@ -49,8 +54,7 @@ class GameMaster
             soul = new Soul(board, 92, 4, 20);
             sans = new Sans(sizeX/2.0f, board->getCenter().y - board->getSize().y / 2.0f - 20, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
             shader = new Cover(board, sizeX, sizeY);
-            // attacks.push_back(make_unique<BoneAttackLevel_1>(board));
-            attack = new BoneAttackLevel_2(board);
+            attack = new BoneAttackLevel_7(board);
             level = -1;
         }
 
@@ -71,7 +75,6 @@ class GameMaster
                     win->close();
                 } else if (Keyboard::isKeyPressed(Keyboard::Enter)) {
                     sans->setIsIdle(false);
-                    
                 }
 
                 if (Keyboard::isKeyPressed(Keyboard::Q)) {
@@ -108,7 +111,6 @@ class GameMaster
             }
             
             if (level == 0) {
-                attack->updateSpawn(); // ensure that bones arent spawned simultaneously
                 attack->startAttack();
             }
 
@@ -127,7 +129,6 @@ class GameMaster
             shader->updateCover(board);
             // everything below shader will appear above it
 
-            
             attack->draw(win);
 
             sans->draw(win);

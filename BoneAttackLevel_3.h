@@ -1,39 +1,35 @@
-#ifndef BONEATTACKLEVEL_2_H
-#define BONEATTACKLEVEL_2_H
+#ifndef BONEATTACKLEVEL_3_H
+#define BONEATTACKLEVEL_3_H
 
 #include "AttackLevels.h"
 #include "BulletBoard.h"
 #include "Bones.h"
 #include "MediumBone.h"
 #include "ShortBone.h"
-
 #include "TinyBone.h"
+#include "LongBone.h"
 
-class BoneAttackLevel_2 : public AttackLevels { 
+#include <cstdlib>
+
+class BoneAttackLevel_3 : public AttackLevels { 
     private:
         vector<unique_ptr<Bones>> bones;
         bool inAttack;
         Board* boardCopy;
-        float posToDestroy = 0;
 
-        int numBones = 6;
-        int bonesSpawned = 0;
+        int numBones = 12;
                 
         Clock spawnClock;
-        float spawnDelay = 1.5f;
+        float spawnDelay = 1.2f;
         bool readyToSpawn = false;
 
     public:
-        BoneAttackLevel_2(Board* board) {
+        BoneAttackLevel_3(Board* board) {
             boardCopy = board;
 
             // Creating the bones
             for (int i = 0; i < numBones; i++) {
-                if (i % 2 == 0) {
-                    bones.push_back(make_unique<MediumBone>(0));
-                } else {
-                    bones.push_back(make_unique<ShortBone>());
-                }
+                bones.push_back(make_unique<MediumBone>(rand() % 2));
             }
             inAttack = false;
         }
@@ -46,25 +42,14 @@ class BoneAttackLevel_2 : public AttackLevels {
             if (!readyToSpawn && spawnClock.getElapsedTime().asSeconds() >= spawnDelay) {
                 readyToSpawn = true; // Allow the next bone to spawn after time of spawnDelay has been surpassed
             }
-            
+                        
             // if bones already active, do not spawn the bone again
             for (int i = 0; i < int(bones.size()); i ++) {
                 if (!bones.at(i)->getIsActive() && readyToSpawn) {
-                    float spawnX = 0;
-                    int spawnDirection = 0;
-                    if (bonesSpawned >= numBones / 2) {
-                        spawnDirection = 1;
-                        spawnX = boardCopy->getCenter().x - (boardCopy->getSize().x / 2.0f);
-                        posToDestroy = boardCopy->getCenter().x + (boardCopy->getSize().x / 2.0f);
-                    } else {
-                        spawnDirection = 3;
-                        spawnX = boardCopy->getCenter().x + (boardCopy->getSize().x / 2.0f);
-                        posToDestroy = boardCopy->getCenter().x - (boardCopy->getSize().x / 2.0f);
-                    }
-                    bones.at(i)->spawn(Vector2f(spawnX, -(bones.at(i)->getSize().y / 2.0f) + boardCopy->getCenter().y + (boardCopy->getSize().y / 2)), 0, spawnDirection);
+                    bones.at(i)->spawn(Vector2f(boardCopy->getCenter().x + (boardCopy->getSize().x / 2.0f), -(bones.at(i)->getSize().y / 2.0f) + boardCopy->getCenter().y + (boardCopy->getSize().y / 2) + (rand() % 50 + 30)), 0, 3);
+                    float spawnDelay = (rand() % 2 - 0.5);
                     readyToSpawn = false;  // Set to false to start the delay
                     spawnClock.restart(); // Restart the clock for the next bone
-                    bonesSpawned++;
                     break; // Exit the loop to wait for the delay
                 }
             }
@@ -85,11 +70,11 @@ class BoneAttackLevel_2 : public AttackLevels {
             // will only perform an attack is the bone is visible on screen (isActive)
             for (int i = 0; i < int(bones.size()); i ++) {
                 if (bones.at(i)->getIsActive()) {
-                    bones.at(i)->callAttack(9, posToDestroy);
+                    bones.at(i)->callAttack(rand() % 5 + 8, boardCopy->getCenter().x - (boardCopy->getSize().x / 2.0f));
                     bones.at(i)->checkCollision(soul);
                 }
             }
-            
+
             // Checks if the bones have finished, and then deletes them
             for (int j = 0; j < int(bones.size());) {
                 if (bones.at(j)->getUsed()) {
@@ -111,7 +96,7 @@ class BoneAttackLevel_2 : public AttackLevels {
             }
         }
 
-        ~BoneAttackLevel_2() {
+        ~BoneAttackLevel_3() {
             ;
         }
 };

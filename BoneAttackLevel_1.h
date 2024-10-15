@@ -43,7 +43,7 @@ class BoneAttackLevel_1 : public AttackLevels {
         void stopAttack() {
             inAttack = false;
             // disable pointer objects assosciated with this attack
-        }
+        } 
 
         // This contains all the code for the attack
         void attack(Soul* soul) {   

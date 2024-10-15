@@ -29,6 +29,7 @@ class GameMaster
         Soul* soul;
         Sans* sans;
         MediumBone* mediumBone;
+        MediumBone* mediumBone2;
         BoneWall* boneWall;
         CustomBone* custom;
         TinyBone* tinyBone;
@@ -49,7 +50,8 @@ class GameMaster
             soul = new Soul(board, 92, 4, 20);
             // replace 80 with board dimensions
             sans = new Sans(sizeX/2.0f, board->getCenter().y - board->getSize().y / 2.0f - 20, 1, "assets/sansFaceEyesClosed.png", "assets/sansTorso.png", "assets/sansLeg.png", "fonts/ComicSans-Pixel.ttf", "ready?");
-            mediumBone = new MediumBone(); 
+            mediumBone = new MediumBone(0); 
+            mediumBone2 = new MediumBone(0); 
             boneWall = new BoneWall();
             shader = new Cover(board, sizeX, sizeY); 
             custom = new CustomBone(10);
@@ -86,7 +88,8 @@ class GameMaster
                 if (Keyboard::isKeyPressed(Keyboard::Space)) {
                     // prevents spamming space to reset position
                     if (!mediumBone->getIsActive()) {
-                        mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 0);
+                        mediumBone->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 3);
+                        mediumBone2->spawn(Vector2f(board->getCenter().x + (board->getSize().x / 2.0f), -(mediumBone2->getSize().y / 2.0f) + board->getCenter().y + (board->getSize().y / 2)), 0, 3);
                     }
 
                     if (!boneWall->getIsActive()) {
@@ -127,6 +130,7 @@ class GameMaster
 
             if (Keyboard::isKeyPressed(Keyboard::P)) {
                 sans->talk("...");
+                sans->setHead("assets/sansFace.png");
             }
             
             // player movement
@@ -169,7 +173,8 @@ class GameMaster
 
             // move bone
             if (mediumBone->getIsActive()) {
-                mediumBone->callAttack(5, 1, board->getCenter().y - board->getSize().y / 2.0f);
+                mediumBone->callAttack(5, board->getCenter().y - board->getSize().y / 2.0f);
+                mediumBone2->callAttack(1, board->getCenter().y - board->getSize().y / 2.0f);
                 mediumBone->checkCollision(soul);
             }
 
@@ -213,7 +218,8 @@ class GameMaster
             // everything below shader will appear above it
 
             custom->draw(win);
-            mediumBone->draw(win);   
+            mediumBone->draw(win);  
+            mediumBone2->draw(win); 
             tinyBone->draw(win);  
             shortBone->draw(win);
             longBone->draw(win);

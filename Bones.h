@@ -22,6 +22,8 @@ class Bones : public AttackInterface {
         Sprite bone;
 
         bool used;
+
+        int posToDestroy = 0;
         
         // Vector2f bonePosition;
                 
@@ -51,7 +53,7 @@ class Bones : public AttackInterface {
             }
             
             // a simple collision detector based on the intersection of sprite bounds
-            if (soul->getSoulBounds().intersects(bone.getGlobalBounds())) {
+            if (soul->getSoulBounds().intersects(bone.getGlobalBounds())) {              
                 soul->doDamage(1, 6);
             } else {
                 return;
@@ -63,8 +65,46 @@ class Bones : public AttackInterface {
             bone.setRotation(setRotation);
             bone.setPosition(setPosition.x, setPosition.y);
             moveDirection = setDirection;
-            isActive = true;  
+            isActive = true;
         }
+
+        virtual void callAttack(int speed, int finalPosition) {
+            // end the attack after it reaches/goes past finalPosition
+            switch (moveDirection)
+            {
+            case 0: // moving up case
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 1: // right case
+                if (bone.getPosition().x > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 2: // down case
+                if (bone.getPosition().y > finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            case 3: // left case
+                if (bone.getPosition().x < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            default:
+                if (bone.getPosition().y < finalPosition) {
+                    isActive = false;
+                    used = true;
+                }
+                break;
+            }
+        }
+
 
         // move the bone with a certain speed and direction
         virtual void move(int speed, int direction) {

@@ -2,6 +2,6 @@
 	g++ oopgame.cpp -lsfml-graphics -lsfml-window -lsfml-system -o game
 	./game
 
-2: GameMaster.cpp Sans.cpp
-	g++ GameMaster.cpp Sans.cpp -lsfml-graphics -lsfml-window -lsfml-system -o game
+2: GameMaster.cpp
+	g++ -Wall -Wextra GameMaster.cpp -lsfml-graphics -lsfml-window -lsfml-system -o game
 	./game

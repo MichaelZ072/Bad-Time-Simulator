@@ -140,11 +140,12 @@ class Soul {
 
         FloatRect getSoulBounds() {
             FloatRect soulBounds = soul.getGlobalBounds();
-            soulBounds.left -= 6;
-            soulBounds.top -= 6;
-            soulBounds.width += 12;
-            soulBounds.height += 12;
-
+            // Reducing the hitbox by 6 on all sides
+            soulBounds.left += 6;
+            soulBounds.top += 6;
+            soulBounds.width -= 12;
+            soulBounds.height -= 12;
+            
             return soulBounds;
         }
 
