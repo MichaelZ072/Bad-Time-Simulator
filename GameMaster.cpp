@@ -27,7 +27,6 @@ class GameMaster
         Clock clock;
         Time time;
         int deltaFrames;
-        int phase;
         int level;
         bool intermission;
     public:
@@ -44,7 +43,6 @@ class GameMaster
             attacks.push_back(make_unique<BlasterAttackLevel_1>());
             attacks.push_back(make_unique<BlasterAttackLevel_3>());
 
-            phase = 0;
             level = -1;
             intermission = true;
         }
@@ -68,44 +66,78 @@ class GameMaster
                 if (event.type == Event::Closed) {
                     win->close();
                 }
-            }
-            
-            if (phase == 0) {
 
-            }
-
-            checkMovement();
-
-            if (Keyboard::isKeyPressed(Keyboard::Enter)) {
-                level = 0;
-                //board->startAnimation();
-            }
-
-            if (level == 0) {
-                attacks.at(0)->startAttack();
-                deltaFrames++;
-            }
-
-            for (auto& attack : attacks) {
-                if (attack->checkAttack()) {
-                    attack->attack(soul);
+                if (intermission) {
+                    //checkInput();
                 }
             }
+            
+            if (level > 13) {
+                // game won
+            } else if (level > 6) {
+                // phase 2 levels
+            } else if (level > -1) {
+                if (intermission) {
+                    if (board->getState() == 0) {
+                        board->startAnimation();
+                        soul->changePosition(Vector2f(-20, -20));
+                    }
 
-            if (deltaFrames > 26) {
-                attacks.at(1)->startAttack();
-            }
+                    if (board->checkAnimation()) {
+                        board->changeIntermission1(winSizeX, winSizeY);
+                    }
+                    
+                    // logic to do with menu
+                } else {
+                    checkMovement();
 
-            if (deltaFrames > 52) {
-                attacks.at(2)->startAttack();
-            }
+                    if (deltaFrames > 150) {
+                        intermission = true;
+                    } else if (deltaFrames > 78) {
+                        level = 3;
+                    } else if (deltaFrames > 52) {
+                        level = 2;
+                    } else if (deltaFrames > 26) {
+                        level = 1;
+                    }
 
-            if (deltaFrames > 72) {
-                attacks.at(3)->startAttack();
-            }
+                    switch (level) {
+                        case 0:
+                            attacks.at(0)->startAttack();
+                            break;
+                        case 1:
+                            attacks.at(1)->startAttack();
+                            break;
+                        case 2:
+                            attacks.at(2)->startAttack();
+                            break;
+                        case 3:
+                            attacks.at(3)->startAttack();
+                            break;
+                        case 4:
+                            attacks.at(3)->startAttack();
+                            break;
+                        case 5:
+                            attacks.at(3)->startAttack();
+                            break;
+                        case 6:
+                            attacks.at(3)->startAttack();
+                            break;
+                    }
 
-            if (board->checkAnimation()) {
-                board->changeIntermission1(winSizeX, winSizeY);
+                    for (auto& attack : attacks) {
+                        if (attack->checkAttack()) {
+                            attack->attack(soul);
+                        }
+                    }
+
+                    deltaFrames++;
+                }
+            } else {
+                if (Keyboard::isKeyPressed(Keyboard::Enter)) {
+                    level = 0;
+                    intermission = false;
+                }
             }
 
             win->clear();
@@ -143,6 +175,10 @@ class GameMaster
             if (Keyboard::isKeyPressed(Keyboard::Right)) {
                 soul->moveRight(board);
             }
+        }
+
+        void checkInput() {
+            
         }
 };
 

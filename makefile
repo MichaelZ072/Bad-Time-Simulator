@@ -2,6 +2,10 @@ Game: GameMaster.cpp
 	g++ -Wall -Wextra GameMaster.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
 	./game
 
+GameTest: GameMaster_copy.cpp
+	g++ -Wall -Wextra GameMaster_copy.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
+	./game
+
 BoardTest: BulletBoard_test.cpp
 	g++ -Wall -Wextra BulletBoard_test.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
 	./game
