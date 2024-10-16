@@ -40,6 +40,8 @@
 #include "BoneAttackLevel_6.h"
 #include "BoneAttackLevel_7.h"
 
+#include "SaveFile.h"
+
 using namespace sf;
 using namespace std;
 
@@ -68,6 +70,9 @@ class GameMaster
         actionSelect* inspect;
         actionSelect* spare;
         actionSelect* choose;
+        SaveFile* save;
+        int mostAttacksWon;
+        int totalHealthLost;
     public:
         GameMaster(int sizeX, int sizeY, string title) {
             winSizeX = sizeX;
@@ -81,10 +86,19 @@ class GameMaster
             soul = new Soul(board, 92);
             cover = new Cover(board, winSizeX, winSizeY);
 
-            action = new actionInterface(50, true, soul);
+            action = new actionInterface(92, true, soul);
             attack = new fight(10);
             spare = new mercy(10);
             inspect = new act(10);
+
+            save = new SaveFile("gameStats.txt");
+            mostAttacksWon = 0;
+            totalHealthLost = 0;
+
+            save->readStats(mostAttacksWon, totalHealthLost);
+            cout << "Current stats: " << endl;
+            cout << "Most Attacks Won: " << mostAttacksWon << endl;
+            cout << "Total Health Lost: " << totalHealthLost << endl;
 
             blasterAttacks.push_back(make_unique<BlasterAttackLevel_1>());
             blasterAttacks.push_back(make_unique<BlasterAttackLevel_2>());
@@ -169,11 +183,23 @@ class GameMaster
 
                 if (board->getState() == 3) {
                         board->startAnimation();
+                        board->changeRed(winSizeX, winSizeY);
                         soul->changePosition(Vector2f(winSizeX / 2, board->getCenter().y * 64 / 100));
                 }
 
                 if (board->checkAnimation()) {
-                    board->changeRed(winSizeX, winSizeY);
+                    board->changeBlue1(winSizeX, winSizeY);
+                }
+
+                // Logic for saving
+                if (level > -1) {
+                    mostAttacksWon += level;
+                }
+                totalHealthLost += soul->totalDamageTaken();
+
+                if (!save->checkSaved()) {
+                    save->writeStats(mostAttacksWon, totalHealthLost);
+                    cout << "New stats saved!" << endl;
                 }
             } else if (level > 0) {
                 if (intermission) {
@@ -206,13 +232,13 @@ class GameMaster
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
                             break;
-                        /*case 6:
+                        case 6: /*
                             boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
                             blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
-                            break;*/
+                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();*/
+                            break; 
                     }
 
                     if (board->getState() == 1) {
@@ -336,7 +362,7 @@ class GameMaster
                                 boneAttacks.at(10)->attack(soul);
                             }
                             break;
-                        case 6:
+                        case 6: /*
                             if (deltaFrames > 200) {
                                 intermission = true;
                             } else if (deltaFrames > 126) {
@@ -371,7 +397,7 @@ class GameMaster
                                 if (boneAttack->checkAttack()) {
                                     boneAttack->attack(soul);
                                 }
-                            }
+                            } */
                             break;
                     }
 
@@ -446,6 +472,17 @@ class GameMaster
             } else {
                 sans->setHead("assets/sansFaceEyesClosed.png");
                 sans->talk("you have died...");
+
+                // Logic for saving
+                if (level > -1) {
+                    mostAttacksWon += level;
+                }
+                totalHealthLost += soul->totalDamageTaken();
+
+                if (!save->checkSaved()) {
+                    save->writeStats(mostAttacksWon, totalHealthLost);
+                    cout << "New stats saved!" << endl;
+                }
             }
 
             if (board->checkAnimation()) {

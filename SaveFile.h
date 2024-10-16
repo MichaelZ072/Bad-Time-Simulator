@@ -8,9 +8,10 @@
 class SaveFile {
 private:
     std::string filename;
+    bool saved;
 public:
     // Constructor to set the filename
-    SaveFile(const std::string& file) : filename(file) {}
+    SaveFile(const std::string& file) : filename(file), saved(false) {}
 
     // Function to read stats from file
     void readStats(int& mostAttacksWon, int& totalHealthLost) {
@@ -32,10 +33,13 @@ public:
             file << mostAttacksWon << std::endl;
             file << totalHealthLost << std::endl;
             file.close();
+            saved = true;
         } else {
             std::cerr << "Error opening file for writing!" << std::endl;
         }
     }
+
+    bool checkSaved() {return saved;}
 };
 
 /*

@@ -78,6 +78,9 @@ class actionInterface {
     spare = new mercy(10);
     choose = new item(10, soul);
 
+    isSelection = false;
+    isChoose = true;
+
     font.loadFromFile("./fonts/ut-hp-font.ttf");
 
     // Initialize health text
@@ -140,7 +143,7 @@ class actionInterface {
   }
 
   void updateHealth(int newHealth) {
-    currentHealth = newHealth;
+    currentHealth = soul->getHealth();
     healthText.setString("HP: " + std::to_string(currentHealth) + "/92");
   }
 
@@ -240,6 +243,7 @@ class actionInterface {
         moveSelectSprite(75, 265);
         isSelection = true;
         isChoose = false;
+        isSelected = false;
         selected = 0;
         break;
 
@@ -249,6 +253,7 @@ class actionInterface {
         moveSelectSprite(75, 265);
         isSelection = true;
         isChoose = false;
+        isSelected = false;
         selected = 1;
         break;
 
@@ -258,6 +263,7 @@ class actionInterface {
         moveSelectSprite(75, 265);
         isSelection = true;
         isChoose = false;
+        isSelected = false;
         selected = 2;
         break;
 
@@ -267,6 +273,7 @@ class actionInterface {
         moveSelectSprite(75, 265);
         isSelection = true;
         isChoose = false;
+        isSelected = false;
         selected = 3;
         break;
 
@@ -302,6 +309,7 @@ class actionInterface {
         isAction = true;
         isAttacking = true;
         isSelected = true;
+        isSelection = false;
         break;
 
       case 2:
@@ -311,6 +319,7 @@ class actionInterface {
         isAction = true;
         isAttacking = true;
         isSelected = true;
+        isSelection = false;
         break;
 
       case 3:
@@ -319,6 +328,7 @@ class actionInterface {
         isAction = true;
         isAttacking = true;
         isSelected = true;
+        isSelection = false;
         break;
     }
   }
@@ -349,6 +359,7 @@ class actionInterface {
   void attackSelected() {
     attackBarCreation();
     isAnimation = true;
+    isAction = true;
   }
 
   void isAttacked() {
@@ -356,6 +367,7 @@ class actionInterface {
     attack->doAction();
     isAnimation = false;
     isAnimationEnd = true;
+    isSelection = false;
   }
 
   void remove() {

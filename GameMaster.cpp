@@ -86,7 +86,7 @@ class GameMaster
             soul = new Soul(board, 92);
             cover = new Cover(board, winSizeX, winSizeY);
 
-            action = new actionInterface(50, true, soul);
+            action = new actionInterface(92, true, soul);
             attack = new fight(10);
             spare = new mercy(10);
             inspect = new act(10);
@@ -183,57 +183,63 @@ class GameMaster
                 sans->talk("you have won...");
 
                 if (board->getState() == 3) {
-                        board->startAnimation();
-                        soul->changePosition(Vector2f(winSizeX / 2, board->getCenter().y * 64 / 100));
+                    board->startAnimation();
+                    soul->changePosition(Vector2f(winSizeX / 2, board->getCenter().y * 64 / 100));
                 }
 
                 if (board->checkAnimation()) {
-                    board->changeRed(winSizeX, winSizeY);
+                    board->changeBlue1(winSizeX, winSizeY);
                 }
 
-                save->writeStats(mostAttacksWon, totalHealthLost);
+                // Logic for saving
+                if (level > -1) {
+                    mostAttacksWon += level;
+                }
+                totalHealthLost += soul->totalDamageTaken();
 
-                cout << "New stats saved!" << endl;
+                if (!save->checkSaved()) {
+                    save->writeStats(mostAttacksWon, totalHealthLost);
+                    cout << "New stats saved!" << endl;
+                }
             } else if (level > 0) {
                 if (intermission) {
-                    switch (level) {
-                        case 1:
-                            for (int i = 1; i < 5; i++) {
-                                boneAttacks.at(i) = make_unique<BoneAttackLevel_5>(board);
-                            }
-                            break;
-                        case 2:
-                            boneAttacks.at(5) = make_unique<BoneAttackLevel_2>(board);
-                            break;
-                        case 3:
-                            boneAttacks.at(6) = make_unique<BoneAttackLevel_4>(board);
-                            boneAttacks.at(7) = make_unique<BoneAttackLevel_5>(board);
-                            boneAttacks.at(8) = make_unique<BoneAttackLevel_6>(board);
-                            boneAttacks.at(9) = make_unique<BoneAttackLevel_7>(board);
-                            break;
-                        case 4:
-                            blasterAttacks.at(4) = make_unique<BlasterAttackLevel_4>();
-                            blasterAttacks.at(4) = make_unique<BlasterAttackLevel_5>();
-                            blasterAttacks.at(4) = make_unique<BlasterAttackLevel_6>();
-                            blasterAttacks.at(4) = make_unique<BlasterAttackLevel_7>();
-                            break;
-                        case 5:
-                            boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
-                            break;
-                        /*case 6:
-                            boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
-                            blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
-                            break;*/
-                    }
-
                     if (board->getState() == 1) {
+                        switch (level) {
+                            case 1:
+                                for (int i = 1; i < 5; i++) {
+                                    boneAttacks.at(i) = make_unique<BoneAttackLevel_5>(board);
+                                }
+                                break;
+                            case 2:
+                                boneAttacks.at(5) = make_unique<BoneAttackLevel_2>(board);
+                                break;
+                            case 3:
+                                boneAttacks.at(6) = make_unique<BoneAttackLevel_4>(board);
+                                boneAttacks.at(7) = make_unique<BoneAttackLevel_5>(board);
+                                boneAttacks.at(8) = make_unique<BoneAttackLevel_6>(board);
+                                boneAttacks.at(9) = make_unique<BoneAttackLevel_7>(board);
+                                break;
+                            case 4:
+                                blasterAttacks.at(4) = make_unique<BlasterAttackLevel_4>();
+                                blasterAttacks.at(4) = make_unique<BlasterAttackLevel_5>();
+                                blasterAttacks.at(4) = make_unique<BlasterAttackLevel_6>();
+                                blasterAttacks.at(4) = make_unique<BlasterAttackLevel_7>();
+                                break;
+                            case 5:
+                                boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>();
+                                break;
+                            case 6: /*
+                                boneAttacks.at(0) = make_unique<BoneAttackLevel_1>(board);
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_2>();
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_1>();
+                                blasterAttacks.at(0) = make_unique<BlasterAttackLevel_3>(); */
+                                break;
+                        }
                         board->startAnimation();
                         soul->changePosition(Vector2f(-20, -20));
                     }
@@ -453,14 +459,17 @@ class GameMaster
                 sans->setHead("assets/sansFaceEyesClosed.png");
                 sans->talk("you have died...");
 
-                save->writeStats(mostAttacksWon, totalHealthLost);
+                // Logic for saving
+                if (level > -1) {
+                    mostAttacksWon += level;
+                }
+                totalHealthLost += soul->totalDamageTaken();
 
-                cout << "New stats saved!" << endl;
+                if (!save->checkSaved()) {
+                    save->writeStats(mostAttacksWon, totalHealthLost);
+                    cout << "New stats saved!" << endl;
+                }
             }
-
-            // Logic for saving
-            mostAttacksWon += level;
-            totalHealthLost += soul->totalDamageTaken();
 
             if (board->checkAnimation()) {
                 cover->updateCover(board);
@@ -529,7 +538,7 @@ class GameMaster
                 if (action->getIsSelect() == false) {
                     soul->intermissionMoveLeft();
                     action->updateSpriteTextures(soul->getIntermissionPositionCount());
-                    cout << soul->getIntermissionPositionCount() << endl;
+                    //cout << soul->getIntermissionPositionCount() << endl;
                 }
             }
 
@@ -537,7 +546,7 @@ class GameMaster
                 if (action->getIsSelect() == false) {
                     soul->intermissionMoveRight();
                     action->updateSpriteTextures(soul->getIntermissionPositionCount());
-                    cout << soul->getIntermissionPositionCount() << endl;
+                    //cout << soul->getIntermissionPositionCount() << endl;
                 }
             }
 
@@ -564,11 +573,10 @@ class GameMaster
             }
         }
 
-        void finalIntermission(){
+        void finalIntermission() {
             level++;
             action->remove();
-            level++;
-            
+            deltaFrames = 0;
             intermission = false;
         }
 

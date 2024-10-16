@@ -1,9 +1,13 @@
 Game: GameMaster.cpp
-	g++ -Wall -Wextra GameMaster.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
+	g++ GameMaster.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
 	./game
 
 GameTest: GameMaster_copy.cpp
 	g++ -Wall -Wextra GameMaster_copy.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
+	./game
+
+ActionTest: GameMasterFinal.cpp
+	g++ -Wall -Wextra GameMasterFinal.cpp -o game -lsfml-graphics -lsfml-window -lsfml-system
 	./game
 
 BoardTest: BulletBoard_test.cpp

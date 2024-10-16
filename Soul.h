@@ -267,7 +267,6 @@ class Soul {
             if (getIntermissionPositionCount() > 3) {
                 intermissionPositionCount = 0;
             }
-
             switch (intermissionPositionCount) {
                 case 0:
                     changePosition(Vector2f(47.5f, 450.0f));
@@ -359,7 +358,7 @@ class Soul {
             } else {
                 isAlive = false;
             }
-            cout << health << endl;
+            //cout << health << endl;
             karma = addKarma;
         } 
 
